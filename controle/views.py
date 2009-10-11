@@ -7,3 +7,7 @@ def hello(request):
 def index(request):
 	lista = Computadores.objects.all().order_by('nome')
 	return render_to_response('computadores/index.html',locals())
+#def timesremain(request,ip):
+#	lista = Computadores.objects.all().get(ip=ip)
+#	return render_to_response('computadores/time.html',locals())
+
