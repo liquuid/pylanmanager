@@ -37,7 +37,6 @@ def computadores(request,ip):
 			print "date ok"
 		if form.is_valid():
 			form = ControleForm(request.POST)
-			print form.cleaned_data['nome']	
 			nome = form.cleaned_data['nome']
 			ip= form.cleaned_data['ip']
 			tempo=form.cleaned_data['tempo']			

@@ -1,31 +1,40 @@
 #!/usr/bin/env python
-'''Tree View/Editable Cells
-
-This demo demonstrates the use of editable cells in a GtkTreeView.
-If you're new to the GtkTreeView widgets and associates, look into the
-GtkListStore example first.'''
-# pygtk version: Maik Hertha <maik.hertha@berlin.de>
+# _*_ coding: UTF-8 _*_
 
 import gobject
 import gtk
+from datetime import datetime
 
 #   columns
 (
-  COLUMN_NUMBER,
-  COLUMN_PRODUCT,
+  COLUMN_NAME,
+  COLUMN_START,
+  COLUMN_TIME,
+  COLUMN_REMAIN,
+  COLUMN_IP,
   COLUMN_EDITABLE
-) = range(3)
+) = range(6)
 
 # data
 articles = [
-    [ 3, "bottles of coke", True ],
-    [ 5, "packages of noodles", True ],
-    [ 2, "packages of chocolate chip cookies", True ],
-    [ 1, "can vanilla ice cream", True ],
-    [ 6, "eggs", True ]
+		[ "pc01", "12:12",1,0,"192.168.0.101", True ],
+		[ "pc02", "12:12",2,0,"192.168.0.102", True ],
+		[ "pc03", "13:13",3,0,"192.168.0.103", True ],
+		[ "pc04", "14:14",4,0,"192.168.0.104", True ],
+		[ "pc05", "15:15",5,0,"192.168.0.105", True ]
 ]
+label = None
+i = 0
+def tempo(button,model):
+	while 1:
+		global label
+		while gtk.events_pending():gtk.main_iteration()
+		label = gtk.Label(str(i))
+		print label
 
-class EditableCellsDemo(gtk.Window):
+
+
+class Cells(gtk.Window):
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
         try:
@@ -39,7 +48,7 @@ class EditableCellsDemo(gtk.Window):
         vbox = gtk.VBox(False, 5)
         self.add(vbox)
 
-        label = gtk.Label("Shopping list (you can edit the cells!)")
+        label = gtk.Label("Lista de máquinas (editavel)"+str(i))
         vbox.pack_start(label, False, False)
 
         sw = gtk.ScrolledWindow()
@@ -56,7 +65,7 @@ class EditableCellsDemo(gtk.Window):
         treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
 
         self.__add_columns(treeview)
-
+	self.__showvars
         sw.add(treeview)
 
         # some buttons
@@ -70,15 +79,32 @@ class EditableCellsDemo(gtk.Window):
         button = gtk.Button(stock=gtk.STOCK_REMOVE)
         button.connect("clicked", self.on_remove_item_clicked, treeview)
         hbox.pack_start(button)
+	button = gtk.Button(label="atcha")
+	button.connect("clicked",tempo,None)
+	hbox.pack_start(button)
+
+	statusbar = gtk.Statusbar()
+	centext_id = statusbar.get_context_id("context_description")
+	message_id = statusbar.push(context_id,"text")
+	statusbar.pop(context_id)
+
 
         self.show_all()
+
+    def __showvars(self,button,model):
+	while 1:
+		while gtk.events_pending():gtk.main_iteration()
+		print datetime.now()
 
     def __create_model(self):
 
         # create list store
         model = gtk.ListStore(
-            gobject.TYPE_INT,
             gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+	    gobject.TYPE_INT,
+	    gobject.TYPE_INT,
+	    gobject.TYPE_STRING,
             gobject.TYPE_BOOLEAN
        )
 
@@ -87,8 +113,12 @@ class EditableCellsDemo(gtk.Window):
             iter = model.append()
 
             model.set (iter,
-                  COLUMN_NUMBER, item[COLUMN_NUMBER],
-                  COLUMN_PRODUCT, item[COLUMN_PRODUCT],
+                  COLUMN_NAME, item[COLUMN_NAME],
+                  COLUMN_START, item[COLUMN_START],
+		  COLUMN_TIME,item[COLUMN_TIME],
+		  COLUMN_REMAIN, item[COLUMN_REMAIN],
+		  COLUMN_IP,item[COLUMN_IP],
+
                   COLUMN_EDITABLE, item[COLUMN_EDITABLE]
            )
         return model
@@ -98,33 +128,64 @@ class EditableCellsDemo(gtk.Window):
 
         model = treeview.get_model()
 
-        # number column
+        # nome column
         renderer = gtk.CellRendererText()
         renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_NUMBER)
+        renderer.set_data("column", COLUMN_NAME)
 
-        column = gtk.TreeViewColumn("Number", renderer, text=COLUMN_NUMBER,
+        column = gtk.TreeViewColumn("Nome", renderer, text=COLUMN_NAME,
                                editable=COLUMN_EDITABLE)
         treeview.append_column(column)
 
-        # product column
+        # start column
         renderer = gtk.CellRendererText()
         renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_PRODUCT)
+        renderer.set_data("column", COLUMN_START)
 
-        column = gtk.TreeViewColumn("Product", renderer, text=COLUMN_PRODUCT,
+        column = gtk.TreeViewColumn("Início", renderer, text=COLUMN_START,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+        # time column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_TIME)
+
+        column = gtk.TreeViewColumn("Tempo", renderer, text=COLUMN_TIME,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+        # remain column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_REMAIN)
+
+        column = gtk.TreeViewColumn("Restante", renderer, text=COLUMN_REMAIN,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+        # ip column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_IP)
+
+        column = gtk.TreeViewColumn("IP", renderer, text=COLUMN_IP,
                                editable=COLUMN_EDITABLE)
         treeview.append_column(column)
 
 
     def on_add_item_clicked(self, button, model):
-        new_item = [0, "Description here", True]
+	print articles
+	new_item = ["pc", "00:00",0,0,"192.168.0.0", True]
         articles.append(new_item)
 
         iter = model.append()
         model.set (iter,
-            COLUMN_NUMBER, new_item[COLUMN_NUMBER],
-            COLUMN_PRODUCT, new_item[COLUMN_PRODUCT],
+            COLUMN_NAME, new_item[COLUMN_NAME],
+            COLUMN_START, new_item[COLUMN_START],
+	    COLUMN_TIME, new_item[COLUMN_TIME],
+	    COLUMN_REMAIN, new_item[COLUMN_REMAIN],
+	    COLUMN_IP, new_item[COLUMN_IP],
             COLUMN_EDITABLE, new_item[COLUMN_EDITABLE]
        )
 
@@ -147,19 +208,35 @@ class EditableCellsDemo(gtk.Window):
         path = model.get_path(iter)[0]
         column = cell.get_data("column")
 
-        if column == COLUMN_NUMBER:
-            articles[path][COLUMN_NUMBER] = int(new_text)
+        if column == COLUMN_NAME:
+            articles[path][COLUMN_NAME] = new_text
 
-            model.set(iter, column, articles[path][COLUMN_NUMBER])
+            model.set(iter, column, articles[path][COLUMN_NAME])
 
-        elif column == COLUMN_PRODUCT:
+        elif column == COLUMN_START:
             old_text = model.get_value(iter, column)
-            articles[path][COLUMN_PRODUCT] = new_text
+            articles[path][COLUMN_START] = new_text
 
-            model.set(iter, column, articles[path][COLUMN_PRODUCT])
+            model.set(iter, column, articles[path][COLUMN_START])
+    	elif column == COLUMN_TIME:
+		old_text = model.get_value(iter,column)
+		articles[path][COLUMN_TIME] = int(new_text)
+
+		model.set(iter,column, articles[path][COLUMN_TIME])
+    	elif column == COLUMN_REMAIN:
+		old_text = model.get_value(iter,column)
+		articles[path][COLUMN_REMAIN] = int(new_text)
+
+		model.set(iter,column, articles[path][COLUMN_REMAIN])
+    	elif column == COLUMN_IP:
+		old_text = model.get_value(iter,column)
+		articles[path][COLUMN_IP] = new_text
+
+		model.set(iter,column, articles[path][COLUMN_IP])
+
 
 def main():
-    EditableCellsDemo()
+    Cells()
     gtk.main()
 
 if __name__ == '__main__':
