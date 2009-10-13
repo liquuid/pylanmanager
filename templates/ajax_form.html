@@ -1,0 +1,5 @@
+<select name="bairro" id="id_bairro" onchange="comboAjax('/cliente/getlogradouros/','id_logradouro',this.value);">
+  {% for b in bairros %}
+    <option value="{{b.id}}">{{b.bairro}}</option>
+  {% endfor %}
+</select>
