@@ -23,14 +23,10 @@ articles = [
 		[ "pc04", "14:14",4,0,"192.168.0.104", True ],
 		[ "pc05", "15:15",5,0,"192.168.0.105", True ]
 ]
-label = None
-i = 0
-def tempo(button,model):
-	while 1:
-		global label
-		while gtk.events_pending():gtk.main_iteration()
-		label = gtk.Label(str(i))
-		print label
+
+def tempo(self):
+	self.statusbar.push(self.context_id,str(datetime.now()))
+	return True
 
 
 
@@ -44,11 +40,11 @@ class Cells(gtk.Window):
         self.set_title(self.__class__.__name__)
         self.set_border_width(5)
         self.set_default_size(320, 200)
-
+	self.timer = gobject.timeout_add(1000,tempo,self)
         vbox = gtk.VBox(False, 5)
         self.add(vbox)
 
-        label = gtk.Label("Lista de máquinas (editavel)"+str(i))
+        label = gtk.Label("Lista de máquinas (editavel)")
         vbox.pack_start(label, False, False)
 
         sw = gtk.ScrolledWindow()
@@ -65,7 +61,6 @@ class Cells(gtk.Window):
         treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
 
         self.__add_columns(treeview)
-	self.__showvars
         sw.add(treeview)
 
         # some buttons
@@ -80,14 +75,15 @@ class Cells(gtk.Window):
         button.connect("clicked", self.on_remove_item_clicked, treeview)
         hbox.pack_start(button)
 	button = gtk.Button(label="atcha")
-	button.connect("clicked",tempo,None)
+	button.connect("clicked",self.__showvars,None)
 	hbox.pack_start(button)
 
-	statusbar = gtk.Statusbar()
-	centext_id = statusbar.get_context_id("context_description")
-	message_id = statusbar.push(context_id,"text")
-	statusbar.pop(context_id)
-
+	self.statusbar = gtk.Statusbar()
+	vbox.pack_start(self.statusbar,False,True,0)
+	self.statusbar.show()
+	self.context_id = self.statusbar.get_context_id("context_description")
+	#self.statusbar.push(self.context_id,"text")
+	#statusbar.pop(context_id)
 
         self.show_all()
 
