@@ -16,7 +16,7 @@ from datetime import datetime
 ) = range(6)
 
 # data
-articles = [
+listas = [
 		[ "pc01", "12:12",1,0,"192.168.0.101", True ],
 		[ "pc02", "12:12",2,0,"192.168.0.102", True ],
 		[ "pc03", "13:13",3,0,"192.168.0.103", True ],
@@ -24,13 +24,9 @@ articles = [
 		[ "pc05", "15:15",5,0,"192.168.0.105", True ]
 ]
 
-def tempo(self):
-	self.statusbar.push(self.context_id,str(datetime.now()))
-	return True
 
 
-
-class Cells(gtk.Window):
+class EditBox(gtk.Window):
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
         try:
@@ -39,7 +35,7 @@ class Cells(gtk.Window):
             self.connect('destroy', lambda *w: gtk.main_quit())
         self.set_title(self.__class__.__name__)
         self.set_border_width(5)
-        self.set_default_size(320, 200)
+        self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
         vbox = gtk.VBox(False, 5)
         self.add(vbox)
@@ -105,7 +101,7 @@ class Cells(gtk.Window):
        )
 
         # add items
-        for item in articles:
+        for item in listas:
             iter = model.append()
 
             model.set (iter,
@@ -171,9 +167,9 @@ class Cells(gtk.Window):
 
 
     def on_add_item_clicked(self, button, model):
-	print articles
+	print listas
 	new_item = ["pc", "00:00",0,0,"192.168.0.0", True]
-        articles.append(new_item)
+        listas.append(new_item)
 
         iter = model.append()
         model.set (iter,
@@ -195,7 +191,7 @@ class Cells(gtk.Window):
             path = model.get_path(iter)[0]
             model.remove(iter)
 
-            del articles[ path ]
+            del listas[ path ]
 
 
     def on_cell_edited(self, cell, path_string, new_text, model):
@@ -205,34 +201,39 @@ class Cells(gtk.Window):
         column = cell.get_data("column")
 
         if column == COLUMN_NAME:
-            articles[path][COLUMN_NAME] = new_text
+            listas[path][COLUMN_NAME] = new_text
 
-            model.set(iter, column, articles[path][COLUMN_NAME])
+            model.set(iter, column, listas[path][COLUMN_NAME])
 
         elif column == COLUMN_START:
             old_text = model.get_value(iter, column)
-            articles[path][COLUMN_START] = new_text
+            listas[path][COLUMN_START] = new_text
 
-            model.set(iter, column, articles[path][COLUMN_START])
+            model.set(iter, column, listas[path][COLUMN_START])
     	elif column == COLUMN_TIME:
 		old_text = model.get_value(iter,column)
-		articles[path][COLUMN_TIME] = int(new_text)
+		listas[path][COLUMN_TIME] = int(new_text)
 
-		model.set(iter,column, articles[path][COLUMN_TIME])
+		model.set(iter,column, listas[path][COLUMN_TIME])
     	elif column == COLUMN_REMAIN:
 		old_text = model.get_value(iter,column)
-		articles[path][COLUMN_REMAIN] = int(new_text)
+		listas[path][COLUMN_REMAIN] = int(new_text)
 
-		model.set(iter,column, articles[path][COLUMN_REMAIN])
+		model.set(iter,column, listas[path][COLUMN_REMAIN])
     	elif column == COLUMN_IP:
 		old_text = model.get_value(iter,column)
-		articles[path][COLUMN_IP] = new_text
+		listas[path][COLUMN_IP] = new_text
 
-		model.set(iter,column, articles[path][COLUMN_IP])
+		model.set(iter,column, listas[path][COLUMN_IP])
+
+def tempo(self):
+
+	self.statusbar.push(self.context_id,str(datetime.now()))
+	return True
 
 
 def main():
-    Cells()
+    EditBox()
     gtk.main()
 
 if __name__ == '__main__':
