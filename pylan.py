@@ -17,15 +17,21 @@ except IOError:
 	arquivo.write('pc1,192.168.0.1\npc2,192.168.0.2\n\n')
 	arquivo.close()
 
+
+try:
+	os.mkdir(os.path.expanduser('~/')+'.pyland')
+except:
+	print 'erro ao criar diretório de cache'
+
+
 maquinas=[]
 
 config = open(os.path.expanduser('~/')+'.pylanrc','r')
 cfd = config.read()
 for i in range(len(cfd.split('\n'))-2):
 	maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],True])
-	print maquinas
 	
-
+config.close()
 
 #   columns
 (
@@ -327,8 +333,19 @@ def tempo(self):
 			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))+" segundos")
 		elif	self.timeout(i):
 			self.vars[i].set_text(str("Encerrado"))
+			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
+			fd.write(str(0))
+			fd.close()
+
 		elif 	not self.timeout(i):
-			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())+60)/60)+" minutos") 
+			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())+60)/60)+" minutos")
+		
+		if not self.timeout(i):
+			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
+			fd.write(str(int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))
+			fd.close()
+
+
 	self.statusbar.push(self.context_id,str(datetime.now()))
 	return True
 
