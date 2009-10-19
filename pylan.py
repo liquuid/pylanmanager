@@ -4,7 +4,7 @@
 import gobject
 import gtk
 from datetime import datetime
-
+from time import time
 #   columns
 (
   COLUMN_NAME,
@@ -17,12 +17,12 @@ from datetime import datetime
 
 # data
 listas = [
-		[ "pc01", "12:12",1,0,"192.168.0.101", True ],
-		[ "pc02", "12:12",2,0,"192.168.0.102", True ],
-		[ "pc03", "13:13",3,0,"192.168.0.103", True ],
-		[ "pc04", "14:14",4,0,"192.168.0.104", True ],
-		[ "pc05", "15:15",5,0,"192.168.0.105", True ]
-]
+		[ "pc01",1255926026, 10,0,"192.168.0.101", True ],
+		[ "pc02",1255926026, 20,0,"192.168.0.102", True ],
+		[ "pc03",1255926000, 30,0,"192.168.0.103", True ],
+		[ "pc04",1255925000, 40,0,"192.168.0.104", True ],
+		[ "pc05",1255924000, 50,0,"192.168.0.105", True ]
+		]
 
 
 
@@ -168,7 +168,7 @@ class EditBox(gtk.Window):
 
     def on_add_item_clicked(self, button, model):
 	print listas
-	new_item = ["pc", "00:00",0,0,"192.168.0.0", True]
+	new_item = ["pc", int(time()),0,0,"192.168.0.0", True]
         listas.append(new_item)
 
         iter = model.append()
@@ -207,7 +207,7 @@ class EditBox(gtk.Window):
 
         elif column == COLUMN_START:
             old_text = model.get_value(iter, column)
-            listas[path][COLUMN_START] = new_text
+            listas[path][COLUMN_START] = int(new_text)
 
             model.set(iter, column, listas[path][COLUMN_START])
     	elif column == COLUMN_TIME:
