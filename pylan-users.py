@@ -21,9 +21,8 @@ class Users(gtk.Window):
 #	self.timer = gobject.timeout_add(1000,tempo,self)
 	self.vars=[]
 
-	table = gtk.Table(2,8,False)
-	self.add(table)
-	vbox = gtk.VBox(False, 5)
+	vbox = gtk.VBox(True, 5)
+	vboxp= gtk.VBox(False, 5)
 	vbox2= gtk.VBox(False, 5)
 	vbox3= gtk.VBox(False, 5)
 	vbox4= gtk.VBox(False, 5)
@@ -31,14 +30,16 @@ class Users(gtk.Window):
 	vbox6= gtk.VBox(False, 5)
 
 	hbox = gtk.HBox(False, 1) 
+	hbox2 = gtk.HBox(False,1)	
+	hbox3 = gtk.HBox(False,1)	
+	hbox4 = gtk.HBox(False,1)
+	hbox5 = gtk.HBox(False,1)
+	hbox6 = gtk.HBox(False,1)
 
-	table.attach(vbox,0,1,0,1)
-	table.attach(vbox2,1,2,0,1)
-	table.attach(vbox3,2,3,0,1)
-	table.attach(vbox4,4,5,0,1)
-	table.attach(vbox5,5,6,0,1)
-	table.attach(vbox6,6,7,0,1)
-	table.set_col_spacing(1,20)
+
+	frame = gtk.Frame('Identificação')
+	frame2 = gtk.Frame('Contato')
+	frame3 = gtk.Frame('Controle')
 
 	label_name = gtk.Label("Nome")
 	label_idade = gtk.Label("Idade")
@@ -50,15 +51,21 @@ class Users(gtk.Window):
 	label_addr = gtk.Label("Endereço")
 	label_cep = gtk.Label("CEP")
 
+	label_name.set_justify(gtk.JUSTIFY_RIGHT)
+	label_name.set_justify(gtk.JUSTIFY_RIGHT)
+	
 	entry_name  = gtk.Entry()
-	entry_idade  = gtk.Entry()
-	entry_birth  = gtk.Entry()
-	entry_sex  = gtk.Entry()
-	entry_esco  = gtk.Entry()
-	entry_tel  = gtk.Entry()
-	entry_email  = gtk.Entry()
-	entry_addr  = gtk.Entry()
-	entry_cep  = gtk.Entry()
+	entry_idade  = gtk.Entry(max=3)
+	entry_birth  = gtk.Entry(max=10)
+	entry_sex=gtk.combo_box_new_text()
+	entry_sex.append_text("Feminino")
+	entry_sex.append_text("Masculino")
+
+	entry_esco  = gtk.Entry(max=20)
+	entry_tel  = gtk.Entry(max=15)
+	entry_email  = gtk.Entry(max=50)
+	entry_addr  = gtk.Entry(max=300)
+	entry_cep  = gtk.Entry(max=10)
 	
 
 	vbox.pack_start(label_name)
@@ -71,25 +78,42 @@ class Users(gtk.Window):
 	vbox2.pack_start(entry_birth)
 	vbox.pack_start(label_esco)
 	vbox2.pack_start(entry_esco)
-	vbox.pack_start(label_addr)
-	vbox2.pack_start(entry_addr)
-	vbox.pack_start(label_cep)
-	vbox2.pack_start(entry_cep)
-	vbox.pack_start(label_tel)
-	vbox2.pack_start(entry_tel)
-	vbox.pack_start(label_email)
-	vbox2.pack_start(entry_email)
-
-#	for i in range(len(maquinas)):
-#	        button = gtk.Button(stock="Adicionar 30 minutos")
-#		button.connect("clicked", self.add30,i)
-#        	vbox4.pack_start(button)
 	
+	vbox3.pack_start(label_addr)
+	vbox4.pack_start(entry_addr)
+	vbox3.pack_start(label_cep)
+	vbox4.pack_start(entry_cep)
+	vbox3.pack_start(label_tel)
+	vbox4.pack_start(entry_tel)
+	vbox3.pack_start(label_email)
+	vbox4.pack_start(entry_email)
+
 #	self.statusbar = gtk.Statusbar()
 #	hbox.pack_start(self.statusbar,True,True,0)
 #	self.context_id = self.statusbar.get_context_id("context_description")
 #	self.statusbar.show()
-       	table.attach(hbox,0,7,7,8)
+
+	button_add = gtk.Button(stock=gtk.STOCK_ADD)
+	button_clear = gtk.Button(stock=gtk.STOCK_CLEAR)
+
+	vboxp.pack_start(hbox)
+	vboxp.pack_start(hbox5)
+	vboxp.pack_start(hbox6)
+	hbox.pack_start(hbox2)
+	hbox2.pack_start(frame)
+	hbox2.pack_start(frame3)
+	hbox5.pack_start(frame2)
+	hbox6.pack_start(button_add)
+	hbox6.pack_start(button_clear)
+	hbox3.pack_start(vbox,False,False,5)
+	hbox3.pack_start(vbox2)
+
+	hbox4.pack_start(vbox3,False,False,50)
+	hbox4.pack_start(vbox4)
+
+	frame.add(hbox3)
+	frame2.add(hbox4)
+	self.add(vboxp)
 
 	self.show_all()
     

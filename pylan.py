@@ -263,6 +263,8 @@ class Painel(gtk.Window):
         	vbox.pack_start(label)
 	for i in range(len(maquinas)):
 		self.vars.append(gtk.Entry())
+		self.vars[i].set_editable(editable=False)
+#		self.vars.append(gtk.Label())
         	vbox2.pack_start(self.vars[i])
 	
 	for i in range(len(maquinas)):
