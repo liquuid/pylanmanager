@@ -45,6 +45,7 @@ class Users(gtk.Window):
 	label_idade = gtk.Label("Idade")
 	label_birth = gtk.Label("Data de Nascimento")
 	label_sex = gtk.Label("Sexo")
+	label_id = gtk.Label("RG/CPF")
 	label_esco = gtk.Label("Escolaridade")
 	label_tel = gtk.Label("Telefone")
 	label_email = gtk.Label("Email")	
@@ -56,6 +57,7 @@ class Users(gtk.Window):
 	
 	entry_name  = gtk.Entry()
 	entry_idade  = gtk.Entry(max=3)
+	entry_id = gtk.Entry(max=10)
 	entry_birth  = gtk.Entry(max=10)
 	entry_sex=gtk.combo_box_new_text()
 	entry_sex.append_text("Feminino")
@@ -70,6 +72,8 @@ class Users(gtk.Window):
 
 	vbox.pack_start(label_name)
 	vbox2.pack_start(entry_name)
+	vbox.pack_start(label_id)
+	vbox2.pack_start(entry_id)
 	vbox.pack_start(label_sex)
 	vbox2.pack_start(entry_sex)
 	vbox.pack_start(label_idade)
