@@ -18,7 +18,7 @@ ip = proc.stdout.read().strip()
 
 
 while 1:
-	h = urllib.urlopen('http://'+server_ip+':8000/'+ip)
+	h = urllib.urlopen('http://'+server_ip+'/'+ip)
 	tempo = h.read()
 	tempo = tempo.strip()
 	if int(tempo) > 0:

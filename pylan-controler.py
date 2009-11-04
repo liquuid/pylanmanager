@@ -9,7 +9,7 @@ ip = proc.stdout.read().strip()
 server = open('/etc/pylan-client.conf').read()
 server_ip = server.split('=')[1].strip()
 
-h = urllib.urlopen('http://'+server_ip+':8000/'+ip)
+h = urllib.urlopen('http://'+server_ip+'/'+ip)
 hud = h.read()
 
 gnome_on = False

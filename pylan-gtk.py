@@ -36,7 +36,7 @@ class Clock(gtk.Window):
 
 def tempo(self):
 	try:
-		h = urllib.urlopen('http://'+server_ip+':8000/'+ip)
+		h = urllib.urlopen('http://'+server_ip+'/'+ip)
 		hud = h.read()
 		hud = int(hud.strip())
 		hor = str(hud/3600)
