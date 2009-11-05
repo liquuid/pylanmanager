@@ -20,7 +20,10 @@ hud = h.read()
 gnome_on = False
 time = 0
 
-os.system('qiv --root /srv/pylan/bg.png')
+try:
+	os.system('qiv --root /srv/pylan/bg.png')
+except:
+	print 'qiv not found'
 
 class Clock(gtk.Window):
 	def __init__(self,parent=None):
