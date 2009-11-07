@@ -7,6 +7,7 @@ from datetime import datetime
 from time import time
 import sys
 import os
+import sqlite3
 
 try:
 	arquivo = open(os.path.expanduser('~/')+'.pylanrc','r')
@@ -21,7 +22,22 @@ except IOError:
 try:
 	os.mkdir(os.path.expanduser('~/')+'.pyland')
 except:
-	print 'erro ao criar diretório de cache'
+	print 'diretorio .pyland já existe'
+
+
+try: 
+	db_file = open(os.path.expanduser('~/')+'.pylandb.sqlite3','r')
+	db_file.close()
+except:
+	print 'criando database'
+	connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
+	cur = connection.cursor()
+	cur.execute('CREATE TABLE users(id NUMBER,name VARCHAR,gender BOOLEAN,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(341480138,\'fernanda\',\'False\',\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(341480137,\'fernando\',\'True\',\'11/05/1981\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	connection.commit()
+	
+	
 
 
 maquinas=[]

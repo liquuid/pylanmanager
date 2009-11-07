@@ -102,6 +102,7 @@ class Users(gtk.Window):
 	button_add = gtk.Button(stock=gtk.STOCK_ADD)
 	button_clear = gtk.Button(stock=gtk.STOCK_CLEAR)
 	button_search = gtk.Button(stock=gtk.STOCK_FIND)
+	button_save = gtk.Button(stock=gtk.STOCK_SAVE)
 	vboxp.pack_start(hbox7)
 	vboxp.pack_start(hbox)
 	vboxp.pack_start(hbox5)
@@ -112,8 +113,7 @@ class Users(gtk.Window):
 	hbox2.pack_start(frame3)
 	hbox5.pack_start(frame2)
 
-#	hbox6.pack_start(frame4)
-
+	hbox6.pack_start(button_save)
 	hbox6.pack_start(button_add)
 	hbox6.pack_start(button_clear)
 
@@ -167,6 +167,10 @@ class Users(gtk.Window):
 		maquinas[i][2] = 60
 	else:
 		maquinas[i][2] = maquinas[i][2] + 60
+
+#class UserModel():
+#	def __init__(self):
+#		self.nome = 
 
 
 def tempo(self):
