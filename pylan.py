@@ -254,59 +254,185 @@ class Painel(gtk.Window):
         self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
 	self.vars=[]
+	notebook = gtk.Notebook()
+	notebook.set_tab_pos(gtk.POS_TOP)
+	
+	mtable = gtk.Table(3,6,False)
+	self.add(mtable)
 
-	table = gtk.Table(2,8,False)
-	self.add(table)
-	vbox = gtk.VBox(False, 5)
-	vbox2= gtk.VBox(False, 5)
-	vbox3= gtk.VBox(False, 5)
-	vbox4= gtk.VBox(False, 5)
-	vbox5= gtk.VBox(False, 5)
-	vbox6= gtk.VBox(False, 5)
+########################################################################
 
-	hbox = gtk.HBox(False, 1) 
 
-	table.attach(vbox,0,1,0,1)
-	table.attach(vbox2,1,2,0,1)
-	table.attach(vbox3,2,3,0,1)
-	table.attach(vbox4,4,5,0,1)
-	table.attach(vbox5,5,6,0,1)
-	table.attach(vbox6,6,7,0,1)
-	table.set_col_spacing(1,20)
+        fvbox = gtk.VBox(True, 5)
+        fvboxp= gtk.VBox(False, 5)
+        fvbox2= gtk.VBox(False, 5)
+        fvbox3= gtk.VBox(False, 5)
+        fvbox4= gtk.VBox(False, 5)
+        fvbox5= gtk.VBox(False, 5)
+        fvbox6= gtk.VBox(False, 5)
+
+        fhbox = gtk.HBox(False, 1)
+        fhbox2 = gtk.HBox(False,1)
+        fhbox3 = gtk.HBox(False,1)
+        fhbox4 = gtk.HBox(False,1)
+        fhbox5 = gtk.HBox(False,1)
+        fhbox6 = gtk.HBox(False,1)
+        fhbox7 = gtk.HBox(False,1)
+
+        fframe = gtk.Frame('Identificação')
+        fframe2 = gtk.Frame('Contato')
+        fframe3 = gtk.Frame('Controle')
+        fframe4 = gtk.Frame('Busca')
+
+        flabel_name = gtk.Label("Nome")
+        flabel_idade = gtk.Label("Idade")
+        flabel_birth = gtk.Label("Data de Nascimento")
+        flabel_sex = gtk.Label("Sexo")
+        flabel_id = gtk.Label("RG/CPF")
+        flabel_esco = gtk.Label("Escolaridade")
+        flabel_tel = gtk.Label("Telefone")
+        flabel_email = gtk.Label("Email")
+        flabel_addr = gtk.Label("Endereço")
+        flabel_cep = gtk.Label("CEP")
+        flabel_search = gtk.Label("Busca por RG/CPF")
+        flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
+        flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
+
+        fentry_name  = gtk.Entry()
+        fentry_idade  = gtk.Entry(max=3)
+        fentry_id = gtk.Entry(max=10)
+        fentry_birth  = gtk.Entry(max=10)
+        fentry_sex=gtk.combo_box_new_text()
+        fentry_sex.append_text("Feminino")
+        fentry_sex.append_text("Masculino")
+        fentry_search = gtk.Entry(max=10)
+
+        fentry_esco  = gtk.Entry(max=20)
+        fentry_tel  = gtk.Entry(max=15)
+        fentry_email  = gtk.Entry(max=50)
+        fentry_addr  = gtk.Entry(max=300)
+        fentry_cep  = gtk.Entry(max=10)
+
+	
+        fvbox.pack_start(flabel_name)
+        fvbox2.pack_start(fentry_name)
+        fvbox.pack_start(flabel_id)
+        fvbox2.pack_start(fentry_id)
+        fvbox.pack_start(flabel_sex)
+        fvbox2.pack_start(fentry_sex)
+        fvbox.pack_start(flabel_idade)
+        fvbox2.pack_start(fentry_idade)
+        fvbox.pack_start(flabel_birth)
+        fvbox2.pack_start(fentry_birth)
+        fvbox.pack_start(flabel_esco)
+        fvbox2.pack_start(fentry_esco)
+
+        fvbox3.pack_start(flabel_addr)
+        fvbox4.pack_start(fentry_addr)
+        fvbox3.pack_start(flabel_cep)
+        fvbox4.pack_start(fentry_cep)
+        fvbox3.pack_start(flabel_tel)
+        fvbox4.pack_start(fentry_tel)
+        fvbox3.pack_start(flabel_email)
+        fvbox4.pack_start(fentry_email)
+
+#       self.statusbar = gtk.Statusbar()
+#       hbox.pack_start(self.statusbar,True,True,0)
+#       self.context_id = self.statusbar.get_context_id("context_description")
+#       self.statusbar.show()
+
+        fbutton_add = gtk.Button(stock=gtk.STOCK_ADD)
+        fbutton_clear = gtk.Button(stock=gtk.STOCK_CLEAR)
+        fbutton_search = gtk.Button(stock=gtk.STOCK_FIND)
+        fbutton_save = gtk.Button(stock=gtk.STOCK_SAVE)
+        fvboxp.pack_start(fhbox7)
+        fvboxp.pack_start(fhbox)
+        fvboxp.pack_start(fhbox5)
+        fvboxp.pack_start(fhbox6)
+
+        fhbox.pack_start(fhbox2)
+        fhbox2.pack_start(fframe)
+        fhbox2.pack_start(fframe3)
+        fhbox5.pack_start(fframe2)
+
+        fhbox6.pack_start(fbutton_save)
+        fhbox6.pack_start(fbutton_add)
+        fhbox6.pack_start(fbutton_clear)
+
+        fhbox7.pack_start(flabel_search)
+        fhbox7.pack_start(fentry_search)
+        fhbox7.pack_start(fbutton_search)
+
+        fhbox3.pack_start(fvbox,False,False,5)
+        fhbox3.pack_start(fvbox2)
+
+        fhbox4.pack_start(fvbox3,False,False,50)
+        fhbox4.pack_start(fvbox4)
+
+        fframe.add(fhbox3)
+        fframe2.add(fhbox4)
+
+#########################################################################
+
+	painel_frame = gtk.Frame("Controle")
+
+
+	ptable = gtk.Table(2,8,False)
+	painel_frame.add(ptable)
+	pvbox = gtk.VBox(False, 5)
+	pvbox2= gtk.VBox(False, 5)
+	pvbox3= gtk.VBox(False, 5)
+	pvbox4= gtk.VBox(False, 5)
+	pvbox5= gtk.VBox(False, 5)
+	pvbox6= gtk.VBox(False, 5)
+
+	phbox = gtk.HBox(False, 1) 
+
+	ptable.attach(pvbox,0,1,0,1)
+	ptable.attach(pvbox2,1,2,0,1)
+	ptable.attach(pvbox3,2,3,0,1)
+	ptable.attach(pvbox4,4,5,0,1)
+	ptable.attach(pvbox5,5,6,0,1)
+	ptable.attach(pvbox6,6,7,0,1)
+	ptable.set_col_spacing(1,20)
 	
 	for i in maquinas:
 		label = gtk.Label(i[0])
-        	vbox.pack_start(label)
+        	pvbox.pack_start(label)
 	for i in range(len(maquinas)):
 		self.vars.append(gtk.Entry())
 		self.vars[i].set_editable(editable=False)
 #		self.vars.append(gtk.Label())
-        	vbox2.pack_start(self.vars[i])
+        	pvbox2.pack_start(self.vars[i])
 	
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock="Adicionar 15 minutos")
 		button.connect("clicked", self.add15,i)
-        	vbox3.pack_start(button)
+        	pvbox3.pack_start(button)
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock="Adicionar 30 minutos")
 		button.connect("clicked", self.add30,i)
-        	vbox4.pack_start(button)
+        	pvbox4.pack_start(button)
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock="Adicionar 1 hora")
 		button.connect("clicked", self.add60,i)
-        	vbox5.pack_start(button)
+        	pvbox5.pack_start(button)
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock=gtk.STOCK_CANCEL)
 		button.connect("clicked", self.cancelseasson, i)
-        	vbox6.pack_start(button)
+        	pvbox6.pack_start(button)
 	
 	
 	self.statusbar = gtk.Statusbar()
-	hbox.pack_start(self.statusbar,True,True,0)
+	phbox.pack_start(self.statusbar,True,True,0)
 	self.context_id = self.statusbar.get_context_id("context_description")
 	self.statusbar.show()
-       	table.attach(hbox,0,7,7,8)
+       	ptable.attach(phbox,0,7,7,8)
+	mtable.attach(notebook,0,3,0,6)
 
+	notebook.insert_page(painel_frame,gtk.Label("Painel"))
+	notebook.insert_page(fvboxp,gtk.Label("Cadastro"))
+	notebook.insert_page(gtk.Label("sdf"),gtk.Label("Configuração"))
 	self.show_all()
     
     def timeout(self,i):
