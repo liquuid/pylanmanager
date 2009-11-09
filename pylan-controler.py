@@ -56,7 +56,7 @@ def tempo(self):
 	
 	if time != 0 and not gnome_on:
 		print "abrindo gnome"
-		os.system('/home/liquuid/Projetos/pylanmanager/pylan-clock.py &')
+		os.system('/srv/pylan/pylan-clock.py &')
 		os.system('gnome-session ?> /dev/null &')
 		gnome_on = True
 	if time == 0 and gnome_on:
@@ -83,7 +83,7 @@ def main():
 	Clock()
 	print hud , gnome_on
 	if int(hud) != 0:
-		os.system('/home/liquuid/Projetos/pylanmanager/pylan-clock.py &')
+		os.system('/srv/pylan/pylan-clock.py &')
 		os.system('gnome-session 2> /dev/null &')
 		gnome_on = True
 
