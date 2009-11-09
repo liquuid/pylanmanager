@@ -37,7 +37,9 @@ except:
 	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(341480137,\'fernando\',\'True\',\'11/05/1981\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
 	connection.commit()
 	
-	
+connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
+cur = connection.cursor()
+
 
 
 maquinas=[]
@@ -261,7 +263,7 @@ class Painel(gtk.Window):
 	self.add(mtable)
 
 ########################################################################
-
+# Painel de cadastro de usuários
 
         fvbox = gtk.VBox(True, 5)
         fvboxp= gtk.VBox(False, 5)
@@ -298,43 +300,51 @@ class Painel(gtk.Window):
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
 
-        fentry_name  = gtk.Entry()
-        fentry_idade  = gtk.Entry(max=3)
-        fentry_id = gtk.Entry(max=10)
-        fentry_birth  = gtk.Entry(max=10)
-        fentry_sex=gtk.combo_box_new_text()
-        fentry_sex.append_text("Feminino")
-        fentry_sex.append_text("Masculino")
-        fentry_search = gtk.Entry(max=10)
+        self.fentry_name  = gtk.Entry()
+        self.fentry_idade  = gtk.Entry(max=3)
+        self.fentry_id = gtk.Entry(max=10)
+        self.fentry_birth  = gtk.Entry(max=10)
+        self.fentry_sex=gtk.combo_box_new_text()
+        self.fentry_sex.append_text("Feminino")
+        self.fentry_sex.append_text("Masculino")
+        self.fentry_search = gtk.Entry(max=10)
+	
+	
 
-        fentry_esco  = gtk.Entry(max=20)
-        fentry_tel  = gtk.Entry(max=15)
-        fentry_email  = gtk.Entry(max=50)
-        fentry_addr  = gtk.Entry(max=300)
-        fentry_cep  = gtk.Entry(max=10)
+        self.fentry_esco  = gtk.combo_box_new_text()
+	self.fentry_esco.append_text("Ensino fundamental incompleto")
+	self.fentry_esco.append_text("Ensino fundamental")
+      	self.fentry_esco.append_text("Ensino médio incompleto")
+	self.fentry_esco.append_text("Ensino médio")
+	self.fentry_esco.append_text("Ensino superior incompleto")
+	self.fentry_esco.append_text("Ensino superior")
+        self.fentry_tel  = gtk.Entry(max=15)
+        self.fentry_email  = gtk.Entry(max=50)
+        self.fentry_addr  = gtk.Entry(max=300)
+        self.fentry_cep  = gtk.Entry(max=10)
 
 	
         fvbox.pack_start(flabel_name)
-        fvbox2.pack_start(fentry_name)
+        fvbox2.pack_start(self.fentry_name)
         fvbox.pack_start(flabel_id)
-        fvbox2.pack_start(fentry_id)
+        fvbox2.pack_start(self.fentry_id)
         fvbox.pack_start(flabel_sex)
-        fvbox2.pack_start(fentry_sex)
+        fvbox2.pack_start(self.fentry_sex)
         fvbox.pack_start(flabel_idade)
-        fvbox2.pack_start(fentry_idade)
+        fvbox2.pack_start(self.fentry_idade)
         fvbox.pack_start(flabel_birth)
-        fvbox2.pack_start(fentry_birth)
+        fvbox2.pack_start(self.fentry_birth)
         fvbox.pack_start(flabel_esco)
-        fvbox2.pack_start(fentry_esco)
+        fvbox2.pack_start(self.fentry_esco)
 
         fvbox3.pack_start(flabel_addr)
-        fvbox4.pack_start(fentry_addr)
+        fvbox4.pack_start(self.fentry_addr)
         fvbox3.pack_start(flabel_cep)
-        fvbox4.pack_start(fentry_cep)
+        fvbox4.pack_start(self.fentry_cep)
         fvbox3.pack_start(flabel_tel)
-        fvbox4.pack_start(fentry_tel)
+        fvbox4.pack_start(self.fentry_tel)
         fvbox3.pack_start(flabel_email)
-        fvbox4.pack_start(fentry_email)
+        fvbox4.pack_start(self.fentry_email)
 
 #       self.statusbar = gtk.Statusbar()
 #       hbox.pack_start(self.statusbar,True,True,0)
@@ -345,7 +355,13 @@ class Painel(gtk.Window):
         fbutton_clear = gtk.Button(stock=gtk.STOCK_CLEAR)
         fbutton_search = gtk.Button(stock=gtk.STOCK_FIND)
         fbutton_save = gtk.Button(stock=gtk.STOCK_SAVE)
-        fvboxp.pack_start(fhbox7)
+       	 
+	fbutton_search.connect('clicked',self.search_pressed)
+	fbutton_clear.connect('clicked',self.clear_pressed)
+	fbutton_add.connect('clicked',self.add_pressed)
+	fbutton_save.connect('clicked',self.save_pressed)
+
+	fvboxp.pack_start(fhbox7)
         fvboxp.pack_start(fhbox)
         fvboxp.pack_start(fhbox5)
         fvboxp.pack_start(fhbox6)
@@ -360,7 +376,7 @@ class Painel(gtk.Window):
         fhbox6.pack_start(fbutton_clear)
 
         fhbox7.pack_start(flabel_search)
-        fhbox7.pack_start(fentry_search)
+        fhbox7.pack_start(self.fentry_search)
         fhbox7.pack_start(fbutton_search)
 
         fhbox3.pack_start(fvbox,False,False,5)
@@ -373,6 +389,7 @@ class Painel(gtk.Window):
         fframe2.add(fhbox4)
 
 #########################################################################
+# Painel de controle das máquinas
 
 	painel_frame = gtk.Frame("Controle")
 
@@ -469,7 +486,42 @@ class Painel(gtk.Window):
 		maquinas[i][2] = 60
 	else:
 		maquinas[i][2] = maquinas[i][2] + 60
+    
+    def search_pressed(self,button):
+	dados = search_by_id(self,self.fentry_search.get_text())[0]
+	self.fentry_id.set_text(str(dados[0]))
+	self.fentry_name.set_text(str(dados[1]))
+	self.fentry_birth.set_text(str(dados[3]))
+	self.fentry_addr.set_text(str(dados[5]))
+	self.fentry_cep.set_text(str(dados[6]))
+	self.fentry_tel.set_text(str(dados[7]))
+	self.fentry_email.set_text(str(dados[8]))
+	self.fentry_id.set_text(str(dados[0]))
+	self.fentry_id.set_text(str(dados[0]))
+	
+    def clear_pressed(self,button):
+	    clear_fields(self)
 
+    def add_pressed(self,button):
+	    pass
+    def save_pressed(self,button):
+	    pass
+
+def clear_fields(self):
+	self.fentry_id.set_text(str(''))
+	self.fentry_name.set_text(str(''))
+	self.fentry_birth.set_text(str(''))
+	self.fentry_addr.set_text(str(''))
+	self.fentry_cep.set_text(str(''))
+	self.fentry_tel.set_text(str(''))
+	self.fentry_email.set_text(str(''))
+	self.fentry_id.set_text(str(''))
+	self.fentry_id.set_text(str(''))
+
+
+def search_by_id(self,id):
+	cur.execute('select * from users where id=\''+id+'\';')
+	return cur.fetchall()
 
 def tempo(self):
 	for i in range(len(self.vars)):
