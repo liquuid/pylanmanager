@@ -32,9 +32,9 @@ except:
 	print 'criando database'
 	connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 	cur = connection.cursor()
-	cur.execute('CREATE TABLE users(id NUMBER,name VARCHAR,gender BOOLEAN,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(341480138,\'fernanda\',\'False\',\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(341480137,\'fernando\',\'True\',\'11/05/1981\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(41480138,\'fernanda\',0,\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(41480137,\'fernando\',1,\'11/05/1981\',4,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
 	connection.commit()
 	
 connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
@@ -287,7 +287,7 @@ class Painel(gtk.Window):
         fframe4 = gtk.Frame('Busca')
 
         flabel_name = gtk.Label("Nome")
-        flabel_idade = gtk.Label("Idade")
+      # flabel_idade = gtk.Label("Idade")
         flabel_birth = gtk.Label("Data de Nascimento")
         flabel_sex = gtk.Label("Sexo")
         flabel_id = gtk.Label("RG/CPF")
@@ -301,13 +301,13 @@ class Painel(gtk.Window):
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
 
         self.fentry_name  = gtk.Entry()
-        self.fentry_idade  = gtk.Entry(max=3)
-        self.fentry_id = gtk.Entry(max=10)
+    #   self.fentry_idade  = gtk.Entry(max=3)
+        self.fentry_id = gtk.Entry(max=15)
         self.fentry_birth  = gtk.Entry(max=10)
         self.fentry_sex=gtk.combo_box_new_text()
         self.fentry_sex.append_text("Feminino")
         self.fentry_sex.append_text("Masculino")
-        self.fentry_search = gtk.Entry(max=10)
+        self.fentry_search = gtk.Entry(max=15)
 	
 	
 
@@ -322,7 +322,6 @@ class Painel(gtk.Window):
         self.fentry_email  = gtk.Entry(max=50)
         self.fentry_addr  = gtk.Entry(max=300)
         self.fentry_cep  = gtk.Entry(max=10)
-
 	
         fvbox.pack_start(flabel_name)
         fvbox2.pack_start(self.fentry_name)
@@ -330,8 +329,8 @@ class Painel(gtk.Window):
         fvbox2.pack_start(self.fentry_id)
         fvbox.pack_start(flabel_sex)
         fvbox2.pack_start(self.fentry_sex)
-        fvbox.pack_start(flabel_idade)
-        fvbox2.pack_start(self.fentry_idade)
+  #      fvbox.pack_start(flabel_idade)
+  #      fvbox2.pack_start(self.fentry_idade)
         fvbox.pack_start(flabel_birth)
         fvbox2.pack_start(self.fentry_birth)
         fvbox.pack_start(flabel_esco)
@@ -449,7 +448,7 @@ class Painel(gtk.Window):
 
 	notebook.insert_page(painel_frame,gtk.Label("Painel"))
 	notebook.insert_page(fvboxp,gtk.Label("Cadastro"))
-	notebook.insert_page(gtk.Label("sdf"),gtk.Label("Configuração"))
+#	notebook.insert_page(gtk.Label("sdf"),gtk.Label("Configuração"))
 	self.show_all()
     
     def timeout(self,i):
@@ -488,7 +487,8 @@ class Painel(gtk.Window):
 		maquinas[i][2] = maquinas[i][2] + 60
     
     def search_pressed(self,button):
-	dados = search_by_id(self,self.fentry_search.get_text())[0]
+	parametro = self.fentry_search.get_text().replace('.','').replace('-','')
+	dados = search_by_id(self,parametro)[0]
 	self.fentry_id.set_text(str(dados[0]))
 	self.fentry_name.set_text(str(dados[1]))
 	self.fentry_birth.set_text(str(dados[3]))
@@ -496,16 +496,26 @@ class Painel(gtk.Window):
 	self.fentry_cep.set_text(str(dados[6]))
 	self.fentry_tel.set_text(str(dados[7]))
 	self.fentry_email.set_text(str(dados[8]))
-	self.fentry_id.set_text(str(dados[0]))
-	self.fentry_id.set_text(str(dados[0]))
+	self.fentry_esco.set_active(dados[4])
+	self.fentry_sex.set_active(dados[2])
 	
     def clear_pressed(self,button):
 	    clear_fields(self)
 
     def add_pressed(self,button):
-	    pass
+	    update_fields(self)
+	    clear_fields(self)
     def save_pressed(self,button):
-	    pass
+	    update_fields(self)
+
+def update_fields(self):
+	if self.fentry_id.get_text():
+		print '$'*80
+		print 'replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+','+self.fentry_name.get_text()+','+str(self.fentry_sex.get_active())+','+self.fentry_birth.get_text()+','+str(self.fentry_esco.get_active())+','+self.fentry_addr.get_text()+','+self.fentry_cep.get_text()+','+self.fentry_tel.get_text()+','+self.fentry_email.get_text()+');'
+		print '$'*80
+
+		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+self.fentry_birth.get_text()+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text()+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
+		connection.commit()
 
 def clear_fields(self):
 	self.fentry_id.set_text(str(''))
@@ -517,7 +527,8 @@ def clear_fields(self):
 	self.fentry_email.set_text(str(''))
 	self.fentry_id.set_text(str(''))
 	self.fentry_id.set_text(str(''))
-
+	self.fentry_sex.set_active(-1)
+	self.fentry_esco.set_active(-1)
 
 def search_by_id(self,id):
 	cur.execute('select * from users where id=\''+id+'\';')
