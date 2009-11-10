@@ -33,21 +33,21 @@ except:
 	connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 	cur = connection.cursor()
 	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(41480138,\'fernanda\',0,\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(41480137,\'fernando\',1,\'11/05/1981\',4,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(1,\'fernanda\',0,\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(2,\'fernando\',1,\'11/05/1981\',4,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
 	connection.commit()
 	
 connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 cur = connection.cursor()
 
-
-
 maquinas=[]
 
 config = open(os.path.expanduser('~/')+'.pylanrc','r')
 cfd = config.read()
-for i in range(len(cfd.split('\n'))-2):
-	maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],True])
+
+for i in range(len(cfd.split('\n'))):
+	if cfd.split('\n')[i]:
+		maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],True])
 	
 config.close()
 
@@ -281,6 +281,8 @@ class Painel(gtk.Window):
         fhbox6 = gtk.HBox(False,1)
         fhbox7 = gtk.HBox(False,1)
 
+	fcontrolebox = gtk.HBox(False,1)
+
         fframe = gtk.Frame('Identificação')
         fframe2 = gtk.Frame('Contato')
         fframe3 = gtk.Frame('Controle')
@@ -386,6 +388,9 @@ class Painel(gtk.Window):
 
         fframe.add(fhbox3)
         fframe2.add(fhbox4)
+	fframe3.add(fcontrolebox)
+	for i in maquinas:
+		fcontrolebox.pack_start(gtk.Button(i[0]))
 
 #########################################################################
 # Painel de controle das máquinas
@@ -539,7 +544,7 @@ def tempo(self):
 		if (int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time()))/60.0 < 1 and (int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time()))/60.0 > 0:
 			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))+" segundos")
 		elif	self.timeout(i):
-			self.vars[i].set_text(str("Encerrado"))
+			self.vars[i].set_text(str("Disponível"))
 			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
 			fd.write(str(0))
 			fd.close()
