@@ -265,13 +265,11 @@ class Painel(gtk.Window):
 ########################################################################
 # Painel de cadastro de usuários
 
-        fvbox = gtk.VBox(True, 5)
-        fvboxp= gtk.VBox(False, 5)
-        fvbox2= gtk.VBox(False, 5)
-        fvbox3= gtk.VBox(False, 5)
-        fvbox4= gtk.VBox(False, 5)
-        fvbox5= gtk.VBox(False, 5)
-        fvbox6= gtk.VBox(False, 5)
+        box_id_esquerdo = gtk.VBox(True, 5)
+        frame_form_root= gtk.VBox(False, 5)
+        box_id_direito= gtk.VBox(False, 5)
+        box_contato_esquerdo= gtk.VBox(False, 5)
+        box_contato_direito= gtk.VBox(False, 5)
 
         fhbox = gtk.HBox(False, 1)
         fhbox2 = gtk.HBox(False,1)
@@ -283,13 +281,12 @@ class Painel(gtk.Window):
 
 	fcontrolebox = gtk.HBox(False,1)
 
-        fframe = gtk.Frame('Identificação')
-        fframe2 = gtk.Frame('Contato')
-        fframe3 = gtk.Frame('Controle')
+        frame_id= gtk.Frame('Identificação')
+        frame_contato= gtk.Frame('Contato')
+        frame_controle = gtk.Frame('Controle')
         fframe4 = gtk.Frame('Busca')
 
         flabel_name = gtk.Label("Nome")
-      # flabel_idade = gtk.Label("Idade")
         flabel_birth = gtk.Label("Data de Nascimento")
         flabel_sex = gtk.Label("Sexo")
         flabel_id = gtk.Label("RG/CPF")
@@ -303,15 +300,12 @@ class Painel(gtk.Window):
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
 
         self.fentry_name  = gtk.Entry()
-    #   self.fentry_idade  = gtk.Entry(max=3)
         self.fentry_id = gtk.Entry(max=15)
         self.fentry_birth  = gtk.Entry(max=10)
         self.fentry_sex=gtk.combo_box_new_text()
         self.fentry_sex.append_text("Feminino")
         self.fentry_sex.append_text("Masculino")
         self.fentry_search = gtk.Entry(max=15)
-	
-	
 
         self.fentry_esco  = gtk.combo_box_new_text()
 	self.fentry_esco.append_text("Ensino fundamental incompleto")
@@ -325,27 +319,25 @@ class Painel(gtk.Window):
         self.fentry_addr  = gtk.Entry(max=300)
         self.fentry_cep  = gtk.Entry(max=10)
 	
-        fvbox.pack_start(flabel_name)
-        fvbox2.pack_start(self.fentry_name)
-        fvbox.pack_start(flabel_id)
-        fvbox2.pack_start(self.fentry_id)
-        fvbox.pack_start(flabel_sex)
-        fvbox2.pack_start(self.fentry_sex)
-  #      fvbox.pack_start(flabel_idade)
-  #      fvbox2.pack_start(self.fentry_idade)
-        fvbox.pack_start(flabel_birth)
-        fvbox2.pack_start(self.fentry_birth)
-        fvbox.pack_start(flabel_esco)
-        fvbox2.pack_start(self.fentry_esco)
+        box_id_esquerdo.pack_start(flabel_name)
+        box_id_direito.pack_start(self.fentry_name)
+        box_id_esquerdo.pack_start(flabel_id)
+        box_id_direito.pack_start(self.fentry_id)
+        box_id_esquerdo.pack_start(flabel_sex)
+        box_id_direito.pack_start(self.fentry_sex)
+        box_id_esquerdo.pack_start(flabel_birth)
+        box_id_direito.pack_start(self.fentry_birth)
+        box_id_esquerdo.pack_start(flabel_esco)
+        box_id_direito.pack_start(self.fentry_esco)
 
-        fvbox3.pack_start(flabel_addr)
-        fvbox4.pack_start(self.fentry_addr)
-        fvbox3.pack_start(flabel_cep)
-        fvbox4.pack_start(self.fentry_cep)
-        fvbox3.pack_start(flabel_tel)
-        fvbox4.pack_start(self.fentry_tel)
-        fvbox3.pack_start(flabel_email)
-        fvbox4.pack_start(self.fentry_email)
+        box_contato_esquerdo.pack_start(flabel_addr)
+        box_contato_direito.pack_start(self.fentry_addr)
+        box_contato_esquerdo.pack_start(flabel_cep)
+        box_contato_direito.pack_start(self.fentry_cep)
+        box_contato_esquerdo.pack_start(flabel_tel)
+        box_contato_direito.pack_start(self.fentry_tel)
+        box_contato_esquerdo.pack_start(flabel_email)
+        box_contato_direito.pack_start(self.fentry_email)
 
 #       self.statusbar = gtk.Statusbar()
 #       hbox.pack_start(self.statusbar,True,True,0)
@@ -362,15 +354,15 @@ class Painel(gtk.Window):
 	fbutton_add.connect('clicked',self.add_pressed)
 	fbutton_save.connect('clicked',self.save_pressed)
 
-	fvboxp.pack_start(fhbox7)
-        fvboxp.pack_start(fhbox)
-        fvboxp.pack_start(fhbox5)
-        fvboxp.pack_start(fhbox6)
+	frame_form_root.pack_start(fhbox7)
+        frame_form_root.pack_start(fhbox)
+        frame_form_root.pack_start(fhbox5)
+        frame_form_root.pack_start(fhbox6)
 
         fhbox.pack_start(fhbox2)
-        fhbox2.pack_start(fframe)
-        fhbox2.pack_start(fframe3)
-        fhbox5.pack_start(fframe2)
+        fhbox2.pack_start(frame_id)
+        fhbox2.pack_start(frame_controle)
+        fhbox5.pack_start(frame_contato)
 
         fhbox6.pack_start(fbutton_save)
         fhbox6.pack_start(fbutton_add)
@@ -380,15 +372,15 @@ class Painel(gtk.Window):
         fhbox7.pack_start(self.fentry_search)
         fhbox7.pack_start(fbutton_search)
 
-        fhbox3.pack_start(fvbox,False,False,5)
-        fhbox3.pack_start(fvbox2)
+        fhbox3.pack_start(box_id_esquerdo,False,False,5)
+        fhbox3.pack_start(box_id_direito)
 
-        fhbox4.pack_start(fvbox3,False,False,50)
-        fhbox4.pack_start(fvbox4)
+        fhbox4.pack_start(box_contato_esquerdo,False,False,50)
+        fhbox4.pack_start(box_contato_direito)
 
-        fframe.add(fhbox3)
-        fframe2.add(fhbox4)
-	fframe3.add(fcontrolebox)
+        frame_id.add(fhbox3)
+        frame_contato.add(fhbox4)
+	frame_controle.add(fcontrolebox)
 	for i in maquinas:
 		fcontrolebox.pack_start(gtk.Button(i[0]))
 
@@ -452,7 +444,7 @@ class Painel(gtk.Window):
 	mtable.attach(notebook,0,3,0,6)
 
 	notebook.insert_page(painel_frame,gtk.Label("Painel"))
-	notebook.insert_page(fvboxp,gtk.Label("Cadastro"))
+	notebook.insert_page(frame_form_root,gtk.Label("Cadastro"))
 #	notebook.insert_page(gtk.Label("sdf"),gtk.Label("Configuração"))
 	self.show_all()
     
@@ -564,7 +556,6 @@ def tempo(self):
 
 def main():
     Painel()
-#    EditBox()
     gtk.main()
 
 if __name__ == '__main__':
