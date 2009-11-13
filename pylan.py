@@ -9,6 +9,9 @@ import sys
 import os
 import sqlite3
 
+columns=8
+ciclo = 1
+
 try:
 	arquivo = open(os.path.expanduser('~/')+'.pylanrc','r')
 	arquivo.close()
@@ -47,7 +50,7 @@ cfd = config.read()
 
 for i in range(len(cfd.split('\n'))):
 	if cfd.split('\n')[i]:
-		maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],True])
+		maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],0,'',True])
 	
 config.close()
 
@@ -256,11 +259,26 @@ class Painel(gtk.Window):
         self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
 	self.vars=[]
+	self.nomes = []
+	self.box_matrix=[]
+	self.box_line=[] 
+	self.lista_controle = []
 	notebook = gtk.Notebook()
 	notebook.set_tab_pos(gtk.POS_TOP)
 	
 	mtable = gtk.Table(3,6,False)
 	self.add(mtable)
+
+########################################################################
+# Código para criar as boxes para o controle a partir do formulario
+	fcontrolebox = gtk.VBox(False,1)
+
+	for i in xrange((len(maquinas)/columns)+1):
+		self.box_line.append(gtk.HBox(False,5))
+#		print i
+	for i in xrange(len(self.box_line)):
+		print i
+		fcontrolebox.pack_start(self.box_line[i])
 
 ########################################################################
 # Painel de cadastro de usuários
@@ -279,7 +297,7 @@ class Painel(gtk.Window):
         fhbox6 = gtk.HBox(False,1)
         fhbox7 = gtk.HBox(False,1)
 
-	fcontrolebox = gtk.HBox(False,1)
+#	fcontrolebox = gtk.HBox(False,1)
 
         frame_id= gtk.Frame('Identificação')
         frame_contato= gtk.Frame('Contato')
@@ -381,8 +399,13 @@ class Painel(gtk.Window):
         frame_id.add(fhbox3)
         frame_contato.add(fhbox4)
 	frame_controle.add(fcontrolebox)
+	count = 0
 	for i in maquinas:
-		fcontrolebox.pack_start(gtk.Button(i[0]))
+		self.lista_controle.append(gtk.ToggleButton(i[0]))
+		self.lista_controle[count].connect("clicked", self.addciclo,count,self.fentry_id,self.fentry_name)
+		self.box_line[count/columns].pack_start(self.lista_controle[count])
+		count = count + 1
+
 
 #########################################################################
 # Painel de controle das máquinas
@@ -411,25 +434,23 @@ class Painel(gtk.Window):
 	
 	for i in maquinas:
 		label = gtk.Label(i[0])
-        	pvbox.pack_start(label)
+        	pvbox2.pack_start(label)
 	for i in range(len(maquinas)):
 		self.vars.append(gtk.Entry())
 		self.vars[i].set_editable(editable=False)
 #		self.vars.append(gtk.Label())
-        	pvbox2.pack_start(self.vars[i])
-	
+        	pvbox3.pack_start(self.vars[i])
 	for i in range(len(maquinas)):
-	        button = gtk.Button(stock="Adicionar 15 minutos")
-		button.connect("clicked", self.add15,i)
-        	pvbox3.pack_start(button)
+		self.nomes.append(gtk.Label())
+        	pvbox.pack_start(self.nomes[i])
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock="Adicionar 30 minutos")
 		button.connect("clicked", self.add30,i)
         	pvbox4.pack_start(button)
-	for i in range(len(maquinas)):
-	        button = gtk.Button(stock="Adicionar 1 hora")
-		button.connect("clicked", self.add60,i)
-        	pvbox5.pack_start(button)
+#	for i in range(len(maquinas)):
+#	        button = gtk.Button(stock="Adicionar 1 hora")
+#		button.connect("clicked", self.add60,i)
+#        	pvbox5.pack_start(button)
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock=gtk.STOCK_CANCEL)
 		button.connect("clicked", self.cancelseasson, i)
@@ -482,7 +503,21 @@ class Painel(gtk.Window):
 		maquinas[i][2] = 60
 	else:
 		maquinas[i][2] = maquinas[i][2] + 60
-    
+
+    def addciclo(self,button,i,id,nome):
+	id = int(id.get_text())
+	if not allreadyin(self,id):
+		i = int(i)
+		nome = nome.get_text()
+		maquinas[i][4]=id
+		maquinas[i][5]=nome
+		print maquinas[i]
+		if self.timeout(i):
+			maquinas[i][1] = int(time())
+			maquinas[i][2] = ciclo
+		else:
+			maquinas[i][2] = maquinas[i][2] + ciclo
+   
     def search_pressed(self,button):
 	parametro = self.fentry_search.get_text().replace('.','').replace('-','')
 	dados = search_by_id(self,parametro)[0]
@@ -531,19 +566,47 @@ def search_by_id(self,id):
 	cur.execute('select * from users where id=\''+id+'\';')
 	return cur.fetchall()
 
+def allreadyin(self,id):
+	for i in xrange(len(maquinas)):
+		if int(id) == int(maquinas[i][4]):
+			for j in xrange(len(maquinas)):
+				self.lista_controle[j].set_sensitive(False)
+			self.lista_controle[i].set_active(True)
+			return True
+	return False
+
 def tempo(self):
 	for i in range(len(self.vars)):
+		if self.timeout(i):
+			self.lista_controle[i].set_sensitive(True)
+		else:
+			self.lista_controle[i].set_sensitive(False)
+
+		print self.fentry_id.get_text() , maquinas[i][4]
+		fid = self.fentry_id.get_text()
+		if fid == str(maquinas[i][4]):
+			print 'ss'
+			for j in xrange(len(maquinas)):
+				self.lista_controle[j].set_active(False)
+				self.lista_controle[j].set_sensitive(True)
+			self.lista_controle[i].set_active(True)
+
 		if (int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time()))/60.0 < 1 and (int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time()))/60.0 > 0:
 			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))+" segundos")
+			self.nomes[i].set_text(str(maquinas[i][5]))
 		elif	self.timeout(i):
 			self.vars[i].set_text(str("Disponível"))
+			maquinas[i][4]=0
+			maquinas[i][5]=''
+			self.nomes[i].set_text(str(maquinas[i][5]))
 			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
 			fd.write(str(0))
 			fd.close()
 
 		elif 	not self.timeout(i):
 			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())+60)/60)+" minutos")
-		
+			self.nomes[i].set_text(str(maquinas[i][5]))
+	
 		if not self.timeout(i):
 			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
 			fd.write(str(int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))
