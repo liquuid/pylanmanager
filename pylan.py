@@ -341,13 +341,9 @@ class Painel(gtk.Window):
 		self.nomes.append(gtk.Label())
         	pvbox.pack_start(self.nomes[i])
 	for i in range(len(maquinas)):
-	        button = gtk.Button(stock="Adicionar 30 minutos")
+	        button = gtk.Button(stock="Adicionar "+str(1)+" minutos")
 		button.connect("clicked", self.add30,i)
         	pvbox4.pack_start(button)
-#	for i in range(len(maquinas)):
-#	        button = gtk.Button(stock="Adicionar 1 hora")
-#		button.connect("clicked", self.add60,i)
-#        	pvbox5.pack_start(button)
 	for i in range(len(maquinas)):
 	        button = gtk.Button(stock=gtk.STOCK_CANCEL)
 		button.connect("clicked", self.cancelseasson, i)
@@ -384,25 +380,12 @@ class Painel(gtk.Window):
 	maquinas[i][1] = 0
 
 
-    def add15(self,button,i):
-	if self.timeout(i):
-		maquinas[i][1] = int(time())
-		maquinas[i][2] = 15
-	else:
-		maquinas[i][2] = maquinas[i][2] + 15
     def add30(self,button,i):
 	if self.timeout(i):
 		maquinas[i][1] = int(time())
-		maquinas[i][2] = 30
+		maquinas[i][2] = ciclo
 	else:
-		maquinas[i][2] = maquinas[i][2] + 30
-
-    def add60(self,button,i):
-	if self.timeout(i):
-		maquinas[i][1] = int(time())
-		maquinas[i][2] = 60
-	else:
-		maquinas[i][2] = maquinas[i][2] + 60
+		maquinas[i][2] = maquinas[i][2] + ciclo
 
     def addciclo(self,button,i,id,nome):
 	id = int(cleanup_id(id.get_text()))
