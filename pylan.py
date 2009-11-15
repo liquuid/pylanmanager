@@ -185,7 +185,7 @@ class Painel(gtk.Window):
         fframe4 = gtk.Frame('Busca')
 
         flabel_name = gtk.Label("Nome")
-        flabel_birth = gtk.Label("Data de Nascimento")
+        flabel_birth = gtk.Label("Data de Nascimento (dd/mm/aaaa)")
         flabel_sex = gtk.Label("Sexo")
         flabel_id = gtk.Label("RG")
         flabel_esco = gtk.Label("Escolaridade")
@@ -405,13 +405,12 @@ class Painel(gtk.Window):
 		maquinas[i][2] = maquinas[i][2] + 60
 
     def addciclo(self,button,i,id,nome):
-	id = int(id.get_text())
+	id = int(cleanup_id(id.get_text()))
 	if not allreadyin(self,id):
 		i = int(i)
 		nome = nome.get_text()
 		maquinas[i][4]=id
 		maquinas[i][5]=nome
-		print maquinas[i]
 		if self.timeout(i):
 			maquinas[i][1] = int(time())
 			maquinas[i][2] = ciclo
@@ -589,7 +588,8 @@ class Painel(gtk.Window):
 #	        return store
 
 
-
+def cleanup_id(string):
+	return string.replace('.','').replace('-','')
 
 
 def update_fields(self):
