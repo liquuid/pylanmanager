@@ -77,174 +77,7 @@ class EditBox(gtk.Window):
         self.set_border_width(5)
         self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
-        self.vars = []
-	vbox = gtk.VBox(False, 5)
-        self.add(vbox)
-
-        label = gtk.Label("Lista de máquinas (editavel)")
-        vbox.pack_start(label, False, False)
-
-        sw = gtk.ScrolledWindow()
-        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        vbox.pack_start(sw)
-
-        # create model
-        model = self.__create_model()
-
-        # create tree view
-        treeview = gtk.TreeView(model)
-        treeview.set_rules_hint(True)
-        treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
-
-        self.__add_columns(treeview)
-        sw.add(treeview)
-
-        # some buttons
-        hbox = gtk.HBox(True, 4)
-        vbox.pack_start(hbox, False, False)
-
-        button = gtk.Button(stock=gtk.STOCK_ADD)
-        button.connect("clicked", self.on_add_item_clicked, model)
-        hbox.pack_start(button)
-
-        button = gtk.Button(stock=gtk.STOCK_REMOVE)
-        button.connect("clicked", self.on_remove_item_clicked, treeview)
-        hbox.pack_start(button)
-	button = gtk.Button(label="atcha")
-	button.connect("clicked",self.__showvars)
-	hbox.pack_start(button)
-
-	self.statusbar = gtk.Statusbar()
-	vbox.pack_start(self.statusbar,False,True,0)
-	self.statusbar.show()
-	self.context_id = self.statusbar.get_context_id("context_description")
-
         self.show_all()
-
-    def __showvars(self,widget):
-		self.destroy()
-		return 0
-
-    def __create_model(self):
-
-        # create list store
-        model = gtk.ListStore(
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-	    gobject.TYPE_INT,
-	    gobject.TYPE_STRING,
-            gobject.TYPE_BOOLEAN
-       )
-
-        # add items
-        for item in maquinas:
-            iter = model.append()
-
-            model.set (iter,
-                  COLUMN_NAME, item[COLUMN_NAME],
-                  COLUMN_START, item[COLUMN_START],
-		  COLUMN_TIME,item[COLUMN_TIME],
-		  COLUMN_IP,item[COLUMN_IP],
-                  COLUMN_EDITABLE, item[COLUMN_EDITABLE]
-           )
-        return model
-
-
-    def __add_columns(self, treeview):
-
-        model = treeview.get_model()
-
-        # nome column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_NAME)
-
-        column = gtk.TreeViewColumn("Nome", renderer, text=COLUMN_NAME,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
-        # start column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_START)
-
-        column = gtk.TreeViewColumn("Início", renderer, text=COLUMN_START,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
-        # time column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_TIME)
-
-        column = gtk.TreeViewColumn("Tempo", renderer, text=COLUMN_TIME,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
-
-        # ip column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_IP)
-
-        column = gtk.TreeViewColumn("IP", renderer, text=COLUMN_IP,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
-
-    def on_add_item_clicked(self, button, model):
-	new_item = ["pc", int(time()),0,0,"192.168.0.0", True]
-        maquinas.append(new_item)
-
-        iter = model.append()
-        model.set (iter,
-            COLUMN_NAME, new_item[COLUMN_NAME],
-            COLUMN_START, new_item[COLUMN_START],
-	    COLUMN_TIME, new_item[COLUMN_TIME],
-	    COLUMN_IP, new_item[COLUMN_IP],
-            COLUMN_EDITABLE, new_item[COLUMN_EDITABLE]
-       )
-
-
-    def on_remove_item_clicked(self, button, treeview):
-
-        selection = treeview.get_selection()
-        model, iter = selection.get_selected()
-
-        if iter:
-            path = model.get_path(iter)[0]
-            model.remove(iter)
-
-            del maquinas[ path ]
-
-
-    def on_cell_edited(self, cell, path_string, new_text, model):
-
-        iter = model.get_iter_from_string(path_string)
-        path = model.get_path(iter)[0]
-        column = cell.get_data("column")
-
-        if column == COLUMN_NAME:
-            maquinas[path][COLUMN_NAME] = new_text
-
-            model.set(iter, column, maquinas[path][COLUMN_NAME])
-
-        elif column == COLUMN_START:
-            old_text = model.get_value(iter, column)
-            maquinas[path][COLUMN_START] = int(new_text)
-
-            model.set(iter, column, maquinas[path][COLUMN_START])
-    	elif column == COLUMN_TIME:
-		old_text = model.get_value(iter,column)
-		maquinas[path][COLUMN_TIME] = int(new_text)
-
-		model.set(iter,column, maquinas[path][COLUMN_TIME])
-    	elif column == COLUMN_IP:
-		old_text = model.get_value(iter,column)
-		maquinas[path][COLUMN_IP] = new_text
-
-		model.set(iter,column, maquinas[path][COLUMN_IP])
 
 
 class Painel(gtk.Window):
@@ -253,7 +86,7 @@ class Painel(gtk.Window):
         try:
             self.set_screen(parent.get_screen())
         except AttributeError:
-            self.connect('destroy', lambda *w: gtk.main_quit())
+           self.connect('destroy', lambda *w: gtk.main_quit())
         self.set_title(self.__class__.__name__)
         self.set_border_width(5)
         self.set_default_size(640, 400)
@@ -269,15 +102,61 @@ class Painel(gtk.Window):
 	mtable = gtk.Table(3,6,False)
 	self.add(mtable)
 
+###############################################################################
+
+	config_frame = gtk.Frame("Configuração")
+
+	edit_vbox = gtk.VBox(False, 5)
+        config_frame.add(edit_vbox)
+
+        label = gtk.Label("Lista de máquinas (editavel)")
+        edit_vbox.pack_start(label, False, False)
+
+        sw = gtk.ScrolledWindow()
+        sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        edit_vbox.pack_start(sw)
+
+        # create model
+        model = self.__create_model()
+
+        # create tree view
+        treeview = gtk.TreeView(model)
+        treeview.set_rules_hint(True)
+        treeview.get_selection().set_mode(gtk.SELECTION_SINGLE)
+
+        self.__add_columns(treeview)
+        sw.add(treeview)
+
+        # some buttons
+        hbox = gtk.HBox(True, 4)
+        edit_vbox.pack_start(hbox, False, False)
+
+        button = gtk.Button(stock=gtk.STOCK_ADD)
+        button.connect("clicked", self.on_add_item_clicked, model)
+        hbox.pack_start(button)
+
+        button = gtk.Button(stock=gtk.STOCK_REMOVE)
+        button.connect("clicked", self.on_remove_item_clicked, treeview)
+        hbox.pack_start(button)
+	button = gtk.Button(label="atcha")
+	button.connect("clicked",self.__showvars)
+	hbox.pack_start(button)
+
+	self.statusbar = gtk.Statusbar()
+	edit_vbox.pack_start(self.statusbar,False,True,0)
+	self.statusbar.show()
+	self.context_id = self.statusbar.get_context_id("context_description")
+
+ 
+
 ########################################################################
 # Código para criar as boxes para o controle a partir do formulario
 	fcontrolebox = gtk.VBox(False,1)
 
 	for i in xrange((len(maquinas)/columns)+1):
 		self.box_line.append(gtk.HBox(False,5))
-#		print i
 	for i in xrange(len(self.box_line)):
-		print i
 		fcontrolebox.pack_start(self.box_line[i])
 
 ########################################################################
@@ -466,7 +345,7 @@ class Painel(gtk.Window):
 
 	notebook.insert_page(painel_frame,gtk.Label("Painel"))
 	notebook.insert_page(frame_form_root,gtk.Label("Cadastro"))
-#	notebook.insert_page(gtk.Label("sdf"),gtk.Label("Configuração"))
+	notebook.insert_page(config_frame,gtk.Label("Configuração"))
 	self.show_all()
     
     def timeout(self,i):
@@ -540,6 +419,130 @@ class Painel(gtk.Window):
     def save_pressed(self,button):
 	    update_fields(self)
 
+    def __showvars(self,widget):
+		self.destroy()
+		return 0
+
+    def __create_model(self):
+
+        # create list store
+        model = gtk.ListStore(
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+	    gobject.TYPE_INT,
+	    gobject.TYPE_STRING,
+            gobject.TYPE_BOOLEAN
+       )
+
+        # add items
+        for item in maquinas:
+            iter = model.append()
+
+            model.set (iter,
+                  COLUMN_NAME, item[COLUMN_NAME],
+                  COLUMN_START, item[COLUMN_START],
+		  COLUMN_TIME,item[COLUMN_TIME],
+		  COLUMN_IP,item[COLUMN_IP],
+                  COLUMN_EDITABLE, item[COLUMN_EDITABLE]
+           )
+        return model
+
+
+    def __add_columns(self, treeview):
+
+        model = treeview.get_model()
+
+        # nome column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_NAME)
+
+        column = gtk.TreeViewColumn("Nome", renderer, text=COLUMN_NAME,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+        # start column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_START)
+
+        column = gtk.TreeViewColumn("Início", renderer, text=COLUMN_START,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+        # time column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_TIME)
+
+        column = gtk.TreeViewColumn("Tempo", renderer, text=COLUMN_TIME,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+
+        # ip column
+        renderer = gtk.CellRendererText()
+        renderer.connect("edited", self.on_cell_edited, model)
+        renderer.set_data("column", COLUMN_IP)
+
+        column = gtk.TreeViewColumn("IP", renderer, text=COLUMN_IP,
+                               editable=COLUMN_EDITABLE)
+        treeview.append_column(column)
+
+
+    def on_add_item_clicked(self, button, model):
+	new_item = ["pc", int(time()),0,0,"192.168.0.0", True]
+        maquinas.append(new_item)
+
+        iter = model.append()
+        model.set (iter,
+            COLUMN_NAME, new_item[COLUMN_NAME],
+            COLUMN_START, new_item[COLUMN_START],
+	    COLUMN_TIME, new_item[COLUMN_TIME],
+	    COLUMN_IP, new_item[COLUMN_IP],
+            COLUMN_EDITABLE, new_item[COLUMN_EDITABLE]
+       )
+
+
+    def on_remove_item_clicked(self, button, treeview):
+
+        selection = treeview.get_selection()
+        model, iter = selection.get_selected()
+
+        if iter:
+            path = model.get_path(iter)[0]
+            model.remove(iter)
+
+            del maquinas[ path ]
+
+
+    def on_cell_edited(self, cell, path_string, new_text, model):
+
+        iter = model.get_iter_from_string(path_string)
+        path = model.get_path(iter)[0]
+        column = cell.get_data("column")
+
+        if column == COLUMN_NAME:
+            maquinas[path][COLUMN_NAME] = new_text
+
+            model.set(iter, column, maquinas[path][COLUMN_NAME])
+
+        elif column == COLUMN_START:
+            old_text = model.get_value(iter, column)
+            maquinas[path][COLUMN_START] = int(new_text)
+
+            model.set(iter, column, maquinas[path][COLUMN_START])
+    	elif column == COLUMN_TIME:
+		old_text = model.get_value(iter,column)
+		maquinas[path][COLUMN_TIME] = int(new_text)
+
+		model.set(iter,column, maquinas[path][COLUMN_TIME])
+    	elif column == COLUMN_IP:
+		old_text = model.get_value(iter,column)
+		maquinas[path][COLUMN_IP] = new_text
+
+		model.set(iter,column, maquinas[path][COLUMN_IP])
+
 def update_fields(self):
 	if self.fentry_id.get_text():
 		print '$'*80
@@ -582,10 +585,8 @@ def tempo(self):
 		else:
 			self.lista_controle[i].set_sensitive(False)
 
-		print self.fentry_id.get_text() , maquinas[i][4]
 		fid = self.fentry_id.get_text()
 		if fid == str(maquinas[i][4]):
-			print 'ss'
 			for j in xrange(len(maquinas)):
 				self.lista_controle[j].set_active(False)
 				self.lista_controle[j].set_sensitive(True)
@@ -616,6 +617,8 @@ def tempo(self):
 	self.statusbar.push(self.context_id,str(datetime.now()))
 	return True
 
+def fake():
+	return True
 
 def main():
     Painel()
