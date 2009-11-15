@@ -63,23 +63,6 @@ config.close()
   COLUMN_EDITABLE
 ) = range(5)
 
-
-class EditBox(gtk.Window):
-    def __init__(self, parent=None):
-        gtk.Window.__init__(self)
-	self.win = gtk.Window(gtk.WINDOW_TOPLEVEL)
-	self.win.destroy()
-        try:
-            self.set_screen(parent.get_screen())
-        except AttributeError:
-            self.connect('destroy', lambda *w: gtk.main_quit())
-        self.set_title(self.__class__.__name__)
-        self.set_border_width(5)
-        self.set_default_size(640, 400)
-	self.timer = gobject.timeout_add(1000,tempo,self)
-        self.show_all()
-
-
 class Painel(gtk.Window):
     def __init__(self, parent=None):
         gtk.Window.__init__(self)
@@ -102,7 +85,25 @@ class Painel(gtk.Window):
 	mtable = gtk.Table(3,6,False)
 	self.add(mtable)
 
+
 ###############################################################################
+# Aba de logs
+
+	log_frame = gtk.Frame("Histórico de acessos")
+
+###############################################################################
+# Aba de estatísticas 
+	
+	stat_frame = gtk.Frame("Estatísticas")
+
+###############################################################################
+#
+
+###############################################################################
+#
+
+###############################################################################
+# Aba de configurações
 
 	config_frame = gtk.Frame("Configuração")
 
@@ -139,7 +140,7 @@ class Painel(gtk.Window):
         button = gtk.Button(stock=gtk.STOCK_REMOVE)
         button.connect("clicked", self.on_remove_item_clicked, treeview)
         hbox.pack_start(button)
-	button = gtk.Button(label="atcha")
+	button = gtk.Button(stock=gtk.STOCK_REFRESH)
 	button.connect("clicked",self.__showvars)
 	hbox.pack_start(button)
 
@@ -180,19 +181,19 @@ class Painel(gtk.Window):
 
         frame_id= gtk.Frame('Identificação')
         frame_contato= gtk.Frame('Contato')
-        frame_controle = gtk.Frame('Controle')
+	frame_controle = gtk.Frame('Iniciar sessão no computador :')
         fframe4 = gtk.Frame('Busca')
 
         flabel_name = gtk.Label("Nome")
         flabel_birth = gtk.Label("Data de Nascimento")
         flabel_sex = gtk.Label("Sexo")
-        flabel_id = gtk.Label("RG/CPF")
+        flabel_id = gtk.Label("RG")
         flabel_esco = gtk.Label("Escolaridade")
         flabel_tel = gtk.Label("Telefone")
         flabel_email = gtk.Label("Email")
         flabel_addr = gtk.Label("Endereço")
         flabel_cep = gtk.Label("CEP")
-        flabel_search = gtk.Label("Busca por RG/CPF")
+        flabel_search = gtk.Label("Buscar ")
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
         flabel_name.set_justify(gtk.JUSTIFY_RIGHT)
 
@@ -202,7 +203,8 @@ class Painel(gtk.Window):
         self.fentry_sex=gtk.combo_box_new_text()
         self.fentry_sex.append_text("Feminino")
         self.fentry_sex.append_text("Masculino")
-        self.fentry_search = gtk.Entry(max=15)
+        self.fentry_search = gtk.Entry()
+	
 
         self.fentry_esco  = gtk.combo_box_new_text()
 	self.fentry_esco.append_text("Ensino fundamental incompleto")
@@ -211,11 +213,26 @@ class Painel(gtk.Window):
 	self.fentry_esco.append_text("Ensino médio")
 	self.fentry_esco.append_text("Ensino superior incompleto")
 	self.fentry_esco.append_text("Ensino superior")
-        self.fentry_tel  = gtk.Entry(max=15)
+	self.fentry_tel  = gtk.Entry(max=15)
         self.fentry_email  = gtk.Entry(max=50)
         self.fentry_addr  = gtk.Entry(max=300)
         self.fentry_cep  = gtk.Entry(max=10)
-	
+
+	self.fentry_type_search = gtk.combo_box_new_text()
+	self.fentry_type_search.append_text('por nome')
+	self.fentry_type_search.append_text('por RG')
+	self.fentry_type_search.set_active(0)
+
+#	completion = gtk.EntryCompletion()
+#	self.fentry_search.set_completion(completion)
+#       completion_model = self.__create_completion_model()
+#       completion.set_model(completion_model)
+#       print completion
+#       # Use model column 0 as the text column
+#       completion.set_text_column(0)
+
+
+
         box_id_esquerdo.pack_start(flabel_name)
         box_id_direito.pack_start(self.fentry_name)
         box_id_esquerdo.pack_start(flabel_id)
@@ -267,6 +284,7 @@ class Painel(gtk.Window):
 
         fhbox7.pack_start(flabel_search)
         fhbox7.pack_start(self.fentry_search)
+	fhbox7.pack_start(self.fentry_type_search)
         fhbox7.pack_start(fbutton_search)
 
         fhbox3.pack_start(box_id_esquerdo,False,False,5)
@@ -346,6 +364,9 @@ class Painel(gtk.Window):
 	notebook.insert_page(painel_frame,gtk.Label("Painel"))
 	notebook.insert_page(frame_form_root,gtk.Label("Cadastro"))
 	notebook.insert_page(config_frame,gtk.Label("Configuração"))
+	notebook.insert_page(log_frame,gtk.Label("Histórico"))
+	notebook.insert_page(stat_frame,gtk.Label("Estatísticas"))
+
 	self.show_all()
     
     def timeout(self,i):
@@ -398,9 +419,18 @@ class Painel(gtk.Window):
 			maquinas[i][2] = maquinas[i][2] + ciclo
    
     def search_pressed(self,button):
-	parametro = self.fentry_search.get_text().replace('.','').replace('-','')
-	dados = search_by_id(self,parametro)[0]
-	self.fentry_id.set_text(str(dados[0]))
+	type = self.fentry_type_search.get_active()
+	parametro = self.fentry_search.get_text().replace('.','').replace('-','').replace(' ','%').replace('\'','')
+	if type == 0:
+		dados = search_by_name(self,parametro)[0]
+	else:
+		dados = search_by_id(self,parametro)[0]
+	
+	id = str(dados[0])
+	if len(str(id)) == 9:
+		id = id[0:2]+'.'+id[2:5]+'.'+id[5:8]+'-'+id[8]
+	
+	self.fentry_id.set_text(id)
 	self.fentry_name.set_text(str(dados[1]))
 	self.fentry_birth.set_text(str(dados[3]))
 	self.fentry_addr.set_text(str(dados[5]))
@@ -543,6 +573,25 @@ class Painel(gtk.Window):
 
 		model.set(iter,column, maquinas[path][COLUMN_IP])
 
+#    def __create_completion_model(self):
+#	        ''' Creates a tree model containing the completions.
+#	        '''
+#	        store = gtk.ListStore(str)
+#
+#	        cur.execute('select name from users;')
+#		resu = cur.fetchall()
+#	
+#		for i in resu:
+#			print i
+#		        iter = store.append()
+#		        store.set(iter, 0,str(i))
+#		print store
+#	        return store
+
+
+
+
+
 def update_fields(self):
 	if self.fentry_id.get_text():
 		print '$'*80
@@ -568,6 +617,11 @@ def clear_fields(self):
 def search_by_id(self,id):
 	cur.execute('select * from users where id=\''+id+'\';')
 	return cur.fetchall()
+
+def search_by_name(self,string):
+	cur.execute('select * from users where name like \'%'+string+'%\';')
+	return cur.fetchall()
+
 
 def allreadyin(self,id):
 	for i in xrange(len(maquinas)):
@@ -616,6 +670,7 @@ def tempo(self):
 
 	self.statusbar.push(self.context_id,str(datetime.now()))
 	return True
+
 
 def fake():
 	return True
