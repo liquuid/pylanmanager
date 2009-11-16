@@ -47,6 +47,7 @@ connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 cur = connection.cursor()
 
 maquinas=[]
+list_conf=[]
 
 config = open(os.path.expanduser('~/')+'.pylanrc','r')
 cfd = config.read()
@@ -54,17 +55,16 @@ cfd = config.read()
 for i in range(len(cfd.split('\n'))):
 	if cfd.split('\n')[i]:
 		maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],0,'',True])
-	
+		list_conf.append([cfd.split('\n')[i].split(',')[0],cfd.split('\n')[i].split(',')[1],True])
+
 config.close()
 
 #   columns
 (
   COLUMN_NAME,
-  COLUMN_START,
-  COLUMN_TIME,
   COLUMN_IP,
   COLUMN_EDITABLE
-) = range(5)
+) = range(3)
 
 class Painel(gtk.Window):
     def __init__(self, parent=None):
@@ -438,29 +438,21 @@ class Painel(gtk.Window):
     def save_pressed(self,button):
 	    update_fields(self)
 
-    def __showvars(self,widget):
-		self.destroy()
-		return 0
-
     def __create_model(self):
 
         # create list store
         model = gtk.ListStore(
             gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-	    gobject.TYPE_INT,
 	    gobject.TYPE_STRING,
             gobject.TYPE_BOOLEAN
        )
 
         # add items
-        for item in maquinas:
+        for item in list_conf:
             iter = model.append()
 
             model.set (iter,
                   COLUMN_NAME, item[COLUMN_NAME],
-                  COLUMN_START, item[COLUMN_START],
-		  COLUMN_TIME,item[COLUMN_TIME],
 		  COLUMN_IP,item[COLUMN_IP],
                   COLUMN_EDITABLE, item[COLUMN_EDITABLE]
            )
@@ -480,24 +472,6 @@ class Painel(gtk.Window):
                                editable=COLUMN_EDITABLE)
         treeview.append_column(column)
 
-        # start column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_START)
-
-        column = gtk.TreeViewColumn("Início", renderer, text=COLUMN_START,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
-        # time column
-        renderer = gtk.CellRendererText()
-        renderer.connect("edited", self.on_cell_edited, model)
-        renderer.set_data("column", COLUMN_TIME)
-
-        column = gtk.TreeViewColumn("Tempo", renderer, text=COLUMN_TIME,
-                               editable=COLUMN_EDITABLE)
-        treeview.append_column(column)
-
 
         # ip column
         renderer = gtk.CellRendererText()
@@ -510,14 +484,12 @@ class Painel(gtk.Window):
 
 
     def on_add_item_clicked(self, button, model):
-	new_item = ["pc", int(time()),0,0,"192.168.0.0", True]
-        maquinas.append(new_item)
+	new_item = ["pc","192.168.0.0", False]
+        list_conf.append(new_item)
 
         iter = model.append()
         model.set (iter,
             COLUMN_NAME, new_item[COLUMN_NAME],
-            COLUMN_START, new_item[COLUMN_START],
-	    COLUMN_TIME, new_item[COLUMN_TIME],
 	    COLUMN_IP, new_item[COLUMN_IP],
             COLUMN_EDITABLE, new_item[COLUMN_EDITABLE]
        )
@@ -532,7 +504,7 @@ class Painel(gtk.Window):
             path = model.get_path(iter)[0]
             model.remove(iter)
 
-            del maquinas[ path ]
+            del list_conf[ path ]
 
 
     def on_cell_edited(self, cell, path_string, new_text, model):
@@ -542,25 +514,14 @@ class Painel(gtk.Window):
         column = cell.get_data("column")
 
         if column == COLUMN_NAME:
-            maquinas[path][COLUMN_NAME] = new_text
+            list_conf[path][COLUMN_NAME] = new_text
 
-            model.set(iter, column, maquinas[path][COLUMN_NAME])
-
-        elif column == COLUMN_START:
-            old_text = model.get_value(iter, column)
-            maquinas[path][COLUMN_START] = int(new_text)
-
-            model.set(iter, column, maquinas[path][COLUMN_START])
-    	elif column == COLUMN_TIME:
-		old_text = model.get_value(iter,column)
-		maquinas[path][COLUMN_TIME] = int(new_text)
-
-		model.set(iter,column, maquinas[path][COLUMN_TIME])
+            model.set(iter, column, list_conf[path][COLUMN_NAME])
     	elif column == COLUMN_IP:
 		old_text = model.get_value(iter,column)
-		maquinas[path][COLUMN_IP] = new_text
+		list_conf[path][COLUMN_IP] = new_text
 
-		model.set(iter,column, maquinas[path][COLUMN_IP])
+		model.set(iter,column, list_conf[path][COLUMN_IP])
 
 #    def __create_completion_model(self):
 #	        ''' Creates a tree model containing the completions.
