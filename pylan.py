@@ -344,7 +344,7 @@ class Painel(gtk.Window):
 		self.nomes.append(gtk.Label())
         	pvbox.pack_start(self.nomes[i])
 	for i in range(len(maquinas)):
-	        button = gtk.Button(stock="Adicionar "+str(1)+" minutos")
+	        button = gtk.Button(stock="Adicionar "+str(ciclo)+" minutos")
 		button.connect("clicked", self.add30,i)
         	pvbox4.pack_start(button)
 	for i in range(len(maquinas)):
@@ -398,8 +398,7 @@ class Painel(gtk.Window):
 
     def add30(self,button,i):
 	if self.timeout(i):
-		maquinas[i][1] = int(time())
-		maquinas[i][2] = ciclo
+		self.opendialog('O computador '+maquinas[i][0]+' não tem nenhum usuário associado. Não é possível iniciar uma sessão anônima, isto é, sem um usuário registrado')
 	else:
 		maquinas[i][2] = maquinas[i][2] + ciclo
 
