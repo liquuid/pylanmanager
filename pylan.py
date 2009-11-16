@@ -36,6 +36,7 @@ except:
 	connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 	cur = connection.cursor()
 	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
+	cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,userid INTEGER,computer VARCHAR,ip VARCHAR,date INTEGER,min INTEGER)')
 	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(1,\'fernanda\',0,\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
 	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(2,\'fernando\',1,\'11/05/1981\',4,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
 	connection.commit()
@@ -397,9 +398,11 @@ class Painel(gtk.Window):
 		if self.timeout(i):
 			maquinas[i][1] = int(time())
 			maquinas[i][2] = ciclo
+			cur.execute('INSERT INTO log (userid,computer,ip,date,min) values('+str(id)+',\''+maquinas[i][0]+'\',\''+maquinas[i][3]+'\','+str(maquinas[i][1])+','+str(maquinas[i][2])+');')
+			connection.commit()
 		else:
 			maquinas[i][2] = maquinas[i][2] + ciclo
-   
+
     def search_pressed(self,button):
 	type = self.fentry_type_search.get_active()
 	parametro = self.fentry_search.get_text().replace('.','').replace('-','').replace(' ','%').replace('\'','')
@@ -641,18 +644,19 @@ def tempo(self):
 			fd.write(str(0))
 			fd.close()
 
-		elif 	not self.timeout(i):
-			self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())+60)/60)+" minutos")
-			self.nomes[i].set_text(str(maquinas[i][5]))
-	
-		if not self.timeout(i):
-			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
-			fd.write(str(int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))
-			fd.close()
+
+                elif    not self.timeout(i):
+                        self.vars[i].set_text(str((int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())+60)/60)+" minutos")
+                        self.nomes[i].set_text(str(maquinas[i][5]))
+
+                if not self.timeout(i):
+                        fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
+                        fd.write(str(int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))
+                        fd.close()
 
 
-	self.statusbar.push(self.context_id,str(datetime.now()))
-	return True
+        self.statusbar.push(self.context_id,str(datetime.now()))
+        return True
 
 
 def fake():
