@@ -143,8 +143,8 @@ class Painel(gtk.Window):
         button = gtk.Button(stock=gtk.STOCK_REMOVE)
         button.connect("clicked", self.on_remove_item_clicked, treeview)
         hbox.pack_start(button)
-	button = gtk.Button(stock=gtk.STOCK_REFRESH)
-	button.connect("clicked",self.__showvars)
+	button = gtk.Button(stock=gtk.STOCK_SAVE)
+	button.connect("clicked",self.save_conf)
 	hbox.pack_start(button)
 
 	self.statusbar = gtk.Statusbar()
@@ -375,10 +375,18 @@ class Painel(gtk.Window):
 		return False
 
 
-    def __showvars(self,button,model):
-	while 1:
-		while gtk.events_pending():gtk.main_iteration()
-		print datetime.now()
+    def save_conf(self,button):
+	arquivo = open(os.path.expanduser('~/')+'.pylanrc','w')
+	temp=''
+	for i in xrange(len(list_conf)):
+		temp = temp+str(list_conf[i][0])+','+str(list_conf[i][1])+'\n'
+	arquivo.write(temp)
+	print temp
+	arquivo.close()
+
+	
+
+
     def cancelseasson(self,button,i):
 	maquinas[i][1] = 0
 
@@ -484,7 +492,7 @@ class Painel(gtk.Window):
 
 
     def on_add_item_clicked(self, button, model):
-	new_item = ["pc","192.168.0.0", False]
+	new_item = ["pc","192.168.0.0", True]
         list_conf.append(new_item)
 
         iter = model.append()
