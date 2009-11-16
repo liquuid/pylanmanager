@@ -35,10 +35,12 @@ except:
 	print 'criando database'
 	connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
 	cur = connection.cursor()
+	# Cria as tabelas
 	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
-	cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,userid INTEGER,computer VARCHAR,ip VARCHAR,date INTEGER,min INTEGER)')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(1,\'fernanda\',0,\'11/05/1980\',1,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
-	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(2,\'fernando\',1,\'11/05/1981\',4,\'asf\',\'123-123\',\'123-123\',\'qwqe\');')
+	cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,username VARCHAR,userid INTEGER,computer VARCHAR,ip VARCHAR,date VARCHAR,min INTEGER)')
+	# Preenche a tabela users com exemplos
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(123456789,\'João José da Silva\',1,\'11/08/1978\',1,\'Rua da esquina num\',\'06626-080\',\'5555-1111\',\'jaum@example.com\');')
+	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(234567890,\'Jeniuma Souza Santos\',0,\'22/04/1991\',4,\'Rua das Flores,123 \',\'1234-1236\',\'12334-123\',\'tesy@example.com\');')
 	connection.commit()
 	
 connection = sqlite3.connect(os.path.expanduser('~/')+'.pylandb.sqlite3')
@@ -398,7 +400,9 @@ class Painel(gtk.Window):
 		if self.timeout(i):
 			maquinas[i][1] = int(time())
 			maquinas[i][2] = ciclo
-			cur.execute('INSERT INTO log (userid,computer,ip,date,min) values('+str(id)+',\''+maquinas[i][0]+'\',\''+maquinas[i][3]+'\','+str(maquinas[i][1])+','+str(maquinas[i][2])+');')
+			print maquinas[i]
+
+			cur.execute('INSERT INTO log (username,userid,computer,ip,date,min) values(\''+str(maquinas[i][5])+'\','+str(id)+',\''+maquinas[i][0]+'\',\''+maquinas[i][3]+'\',\''+str(datetime.now())+'\','+str(maquinas[i][2])+');')
 			connection.commit()
 		else:
 			maquinas[i][2] = maquinas[i][2] + ciclo
