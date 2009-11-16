@@ -10,7 +10,7 @@ import os
 import sqlite3
 
 columns=8
-ciclo = 1
+ciclo = 30
 
 try:
 	arquivo = open(os.path.expanduser('~/')+'.pylanrc','r')
@@ -381,10 +381,15 @@ class Painel(gtk.Window):
 	for i in xrange(len(list_conf)):
 		temp = temp+str(list_conf[i][0])+','+str(list_conf[i][1])+'\n'
 	arquivo.write(temp)
-	print temp
+	self.opendialog('Configurações salvas com sucesso')
 	arquivo.close()
-
-	
+    def opendialog(self,message):
+        dialog = gtk.MessageDialog(self,
+                gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                gtk.MESSAGE_INFO, gtk.BUTTONS_OK,
+                message)
+        dialog.run()
+        dialog.destroy()
 
 
     def cancelseasson(self,button,i):
@@ -419,9 +424,15 @@ class Painel(gtk.Window):
 	type = self.fentry_type_search.get_active()
 	parametro = self.fentry_search.get_text().replace('.','').replace('-','').replace(' ','%').replace('\'','')
 	if type == 0:
-		dados = search_by_name(self,parametro)[0]
+		try:
+			dados = search_by_name(self,parametro)[0]
+		except IndexError:
+			self.opendialog('Pessoa não encontrada')
 	else:
-		dados = search_by_id(self,parametro)[0]
+		try:
+			dados = search_by_id(self,parametro)[0]
+		except IndexError:
+			self.opendialog('RG não encontrado')
 	
 	id = str(dados[0])
 	if len(str(id)) == 9:
