@@ -44,7 +44,6 @@ def tempo(self):
 	global time
 	global gnome_on
 	global hud
-#	print "#"*50
 	h = urllib.urlopen('http://'+server_ip+'/'+ip)
 	hud = h.read()
 	hud = int(hud.strip())

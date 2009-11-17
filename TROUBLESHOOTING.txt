@@ -1,0 +1,8 @@
+Por uma série de razões, sistemas que baseam sua camada de abstração de hardware no HAL e as permissões no PolicyKit , vão negar acesso a devices hotplug caso não sejam inicializados usando um Desktop Manager como gdm/kdm etc...
+Durante o processo de login os Desktop Managers inicializam o policykit , o pylan-controle (cliente) não tem essa capacidade, por tanto deve ser usada a seguinte linha de comando, como root imediatamente antes do loop que executa o pylan-controler :
+
+polkit-auth --grant org.freedesktop.hal.device-access.cdrom --user NOME
+
+Onde NOME é o nome do usuário que terá permissão para acessar os devices de armazenamento.
+
+Um bom local para usar esse comando é dentro do script /etc/rc.local.
