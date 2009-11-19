@@ -15,5 +15,10 @@ afd = arquivo.read()
 arquivo.close()
 workdir = afd.split('=')[1].strip()
 
+try:
+	os.mkdir(workdir)
+except:
+	print 'Erro ao criar diretório de trabalho (já existe ?)'
+
 os.chdir(workdir) 
 SimpleHTTPServer.test()
