@@ -44,8 +44,12 @@ def tempo(self):
 	global time
 	global gnome_on
 	global hud
-	h = urllib.urlopen('http://'+server_ip+'/'+ip)
-	hud = h.read()
+	try:
+		h = urllib.urlopen('http://'+server_ip+'/'+ip)
+		hud=h.read()
+	except IOError: 
+		print 'Sem contato com o servidor'
+
 	hud = int(hud.strip())
 	time = int(hud)
 	hor = str(hud/3600)
@@ -58,11 +62,11 @@ def tempo(self):
 		os.system('/srv/pylan/pylan-clock.py &')
 		os.system('gnome-session ?> /dev/null &')
 		gnome_on = True
-	if time == 0 and gnome_on:
+	if time == 0:
 		print "fechando gnome"
 		killprocess() 
-
 		gnome_on = False
+		
 
 	self.entry.push(self.context_id,str(hud))
 	return True
