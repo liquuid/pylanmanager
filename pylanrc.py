@@ -4,14 +4,19 @@
 import subprocess,os,urllib
 
 def get_interface():
-	configuracao = open('/etc/pylan-client.conf').read()
+	arquivo = open('/etc/pylan-client.conf')
+	configuracao = arquivo.read()
+	arquivo.close()
+
 	for i in configuracao.split():
 	        if i.split('=')[0]=="interface":
 	                return i.split('=')[1]
 	print 'erro ao obter interface'
 
 def get_serverip():
-	configuracao = open('/etc/pylan-client.conf').read()
+        arquivo = open('/etc/pylan-client.conf')
+        configuracao = arquivo.read()
+        arquivo.close()
 	for i in configuracao.split():
 	        if i.split('=')[0]=="server":
 	                return i.split('=')[1]
