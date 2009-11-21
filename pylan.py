@@ -227,14 +227,15 @@ class Painel(gtk.Window):
 	self.fentry_type_search.append_text('por nome')
 	self.fentry_type_search.append_text('por RG')
 	self.fentry_type_search.set_active(0)
+###############################################################################
+#       Name completion 
 
-#	completion = gtk.EntryCompletion()
-#	self.fentry_search.set_completion(completion)
-#       completion_model = self.__create_completion_model()
-#       completion.set_model(completion_model)
-#       print completion
-#       # Use model column 0 as the text column
-#       completion.set_text_column(0)
+	completion = gtk.EntryCompletion()
+	self.fentry_search.set_completion(completion)
+        completion_model = self.__create_completion_model()
+        completion.set_model(completion_model)
+        # Use model column 0 as the text column
+        completion.set_text_column(0)
 
 
 
@@ -543,20 +544,21 @@ class Painel(gtk.Window):
 
 		model.set(iter,column, list_conf[path][COLUMN_IP])
 
-#    def __create_completion_model(self):
-#	        ''' Creates a tree model containing the completions.
-#	        '''
-#	        store = gtk.ListStore(str)
-#
-#	        cur.execute('select name from users;')
-#		resu = cur.fetchall()
-#	
-#		for i in resu:
-#			print i
-#		        iter = store.append()
-#		        store.set(iter, 0,str(i))
-#		print store
-#	        return store
+    def __create_completion_model(self):
+	        ''' Creates a tree model containing the completions.
+	        '''
+	        store = gtk.ListStore(str)
+
+	        cur.execute('select name from users;')
+		resu = cur.fetchall()
+		list=[]
+		for i in resu:
+			list.append(i[0])
+		for i in list:
+		        iter = store.append()
+		        store.set(iter, 0,str(i))
+		print store
+	        return store
 
 
 def cleanup_id(string):
