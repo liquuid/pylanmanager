@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # _*_ coding: UTF-8 _*_
 
+import pylanrc
 import gobject
 import gtk
 from datetime import datetime
@@ -56,8 +57,9 @@ for i in range(len(cfd.split('\n'))):
 	if cfd.split('\n')[i]:
 		maquinas.append([cfd.split('\n')[i].split(',')[0],0,0,cfd.split('\n')[i].split(',')[1],0,'',True])
 		list_conf.append([cfd.split('\n')[i].split(',')[0],cfd.split('\n')[i].split(',')[1],True])
-
 config.close()
+
+workdir = pylanrc.get_workdir()
 
 #   columns
 (
@@ -623,7 +625,7 @@ def tempo(self):
 			maquinas[i][4]=0
 			maquinas[i][5]=''
 			self.nomes[i].set_text(str(maquinas[i][5]))
-			fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
+			fd = open(workdir+maquinas[i][3],'w')
 			fd.write(str(0))
 			fd.close()
 
@@ -633,7 +635,7 @@ def tempo(self):
                         self.nomes[i].set_text(str(maquinas[i][5]))
 
                 if not self.timeout(i):
-                        fd = open(os.path.expanduser('~/')+'.pyland/'+maquinas[i][3],'w')
+                        fd = open(workdir+maquinas[i][3],'w')
                         fd.write(str(int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time())))
                         fd.close()
 

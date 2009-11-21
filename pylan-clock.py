@@ -1,22 +1,14 @@
 #!/usr/bin/env python
 
-import gtk,gobject,subprocess,os
+import gtk,gobject
+import pylanrc
 import urllib
 
-configuracao = open('/etc/pylan-client.conf').read()
-for i in configuracao.split():
-        if i.split('=')[0]=="server":
-                server_ip = i.split('=')[1]
-        if i.split('=')[0]=="interface":
-                interface = i.split('=')[1]
+server_ip = pylanrc.get_serverip()
+interface = pylanrc.get_interface()
+ip = pylanrc.get_ip()
 
-command = 'LANG=C ifconfig '+interface+' | grep "inet add" | cut -d ":" -f 2| sed "s/ //g" | sed "s/Bcast//g"'
-
-proc = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True)
-os.waitpid(proc.pid,0)
-ip = proc.stdout.read().strip()
-
-
+print server_ip , interface, ip
 
 class Clock(gtk.Window):
 	def __init__(self,parent=None):
