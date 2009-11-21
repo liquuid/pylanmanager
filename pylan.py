@@ -75,7 +75,7 @@ class Painel(gtk.Window):
             self.set_screen(parent.get_screen())
         except AttributeError:
            self.connect('destroy', lambda *w: gtk.main_quit())
-        self.set_title(self.__class__.__name__)
+        self.set_title('PyLan Manager')
         self.set_border_width(5)
         self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
