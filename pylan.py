@@ -38,7 +38,7 @@ except:
 	cur = connection.cursor()
 	# Cria as tabelas
 	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
-	cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,username VARCHAR,userid INTEGER,computer VARCHAR,ip VARCHAR,date VARCHAR,min INTEGER)')
+	cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,username VARCHAR,userid INTEGER,computer VARCHAR,ip VARCHAR,date VARCHAR,min INTEGER,birthday VARCHAR)')
 	# Preenche a tabela users com exemplos
 	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(123456789,\'João José da Silva\',1,\'11/08/1978\',1,\'Rua da esquina num\',\'06626-080\',\'5555-1111\',\'jaum@example.com\');')
 	cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(234567890,\'Jeniuma Souza Santos\',0,\'22/04/1991\',4,\'Rua das Flores,123 \',\'1234-1236\',\'12334-123\',\'tesy@example.com\');')
@@ -61,12 +61,17 @@ config.close()
 
 workdir = pylanrc.get_workdir()
 
-#   columns
+#   Colunas editaveis de configuração
 (
   COLUMN_NAME,
   COLUMN_IP,
   COLUMN_EDITABLE
 ) = range(3)
+
+
+# Colunas de log
+(LOG_ID, LOG_PC,LOG_NAME,LOG_AGE,LOG_BIRTH,LOG_RG,LOG_INI,LOG_TEMP)=range(8)
+
 
 class Painel(gtk.Window):
     def __init__(self, parent=None):
@@ -93,9 +98,22 @@ class Painel(gtk.Window):
 
 ###############################################################################
 # Aba de logs
-
+	log_vbox = gtk.VBox(False,5)
 	log_frame = gtk.Frame("Histórico de acessos")
-
+	log_sw = gtk.ScrolledWindow()
+        log_sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        log_sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        log_vbox.pack_start(log_sw)
+	log_treeview = gtk.TreeView()
+	# create tree model
+	log_model = self.__log_create_model()
+	# create tree view
+	log_treeview = gtk.TreeView(log_model)
+	log_treeview.set_rules_hint(True)
+#log_treeview.set_search_column(COLUMN_DESCRIPTION)
+	log_sw.add(log_treeview)
+	log_frame.add(log_vbox)
+        self.__add_log_columns(log_treeview)
 ###############################################################################
 # Aba de estatísticas 
 	
@@ -305,10 +323,9 @@ class Painel(gtk.Window):
 	count = 0
 	for i in maquinas:
 		self.lista_controle.append(gtk.ToggleButton(i[0]))
-		self.lista_controle[count].connect("clicked", self.addciclo,count,self.fentry_id,self.fentry_name)
+		self.lista_controle[count].connect("clicked", self.addciclo,count,self.fentry_id,self.fentry_name,self.fentry_birth)
 		self.box_line[count/columns].pack_start(self.lista_controle[count])
 		count = count + 1
-
 
 #########################################################################
 # Painel de controle das máquinas
@@ -341,7 +358,6 @@ class Painel(gtk.Window):
 	for i in range(len(maquinas)):
 		self.vars.append(gtk.Entry())
 		self.vars[i].set_editable(editable=False)
-#		self.vars.append(gtk.Label())
         	pvbox3.pack_start(self.vars[i])
 	for i in range(len(maquinas)):
 		self.nomes.append(gtk.Label())
@@ -405,7 +421,7 @@ class Painel(gtk.Window):
 	else:
 		maquinas[i][2] = maquinas[i][2] + ciclo
 
-    def addciclo(self,button,i,id,nome):
+    def addciclo(self,button,i,id,nome,birth):
 	id = int(cleanup_id(id.get_text()))
 	if not allreadyin(self,id):
 		i = int(i)
@@ -417,7 +433,7 @@ class Painel(gtk.Window):
 			maquinas[i][2] = ciclo
 			print maquinas[i]
 
-			cur.execute('INSERT INTO log (username,userid,computer,ip,date,min) values(\''+str(maquinas[i][5])+'\','+str(id)+',\''+maquinas[i][0]+'\',\''+maquinas[i][3]+'\',\''+str(datetime.now())+'\','+str(maquinas[i][2])+');')
+			cur.execute('INSERT INTO log (username,userid,birthday,computer,ip,date,min) values("'+str(maquinas[i][5])+'",'+str(id)+',"'+str(birth.get_text())+'","'+maquinas[i][0]+'","'+maquinas[i][3]+'","'+str(datetime.now())+'","'+str(maquinas[i][2])+'");')
 			connection.commit()
 		else:
 			maquinas[i][2] = maquinas[i][2] + ciclo
@@ -437,8 +453,7 @@ class Painel(gtk.Window):
 			self.opendialog('RG não encontrado')
 	
 	id = str(dados[0])
-	if len(str(id)) == 9:
-		id = id[0:2]+'.'+id[2:5]+'.'+id[5:8]+'-'+id[8]
+	id=pontua_id(str(id))
 	
 	self.fentry_id.set_text(id)
 	self.fentry_name.set_text(str(dados[1]))
@@ -449,7 +464,7 @@ class Painel(gtk.Window):
 	self.fentry_email.set_text(str(dados[8]))
 	self.fentry_esco.set_active(dados[4])
 	self.fentry_sex.set_active(dados[2])
-	
+
     def clear_pressed(self,button):
 	    clear_fields(self)
 
@@ -458,6 +473,93 @@ class Painel(gtk.Window):
 	    clear_fields(self)
     def save_pressed(self,button):
 	    update_fields(self)
+
+    def gera_logs(self):
+	cur.execute('select * from log;')
+	list = cur.fetchall()
+	logs=[]
+	for i in xrange(len(list)):
+		logs.append([list[i][0],list[i][3]+' ( '+list[i][4]+' ) ',list[i][1],'',list[i][7],pontua_id(str(list[i][2])),list[i][5],'+'+str(list[i][6])+'minutos'])
+	return logs
+
+
+    
+    def __log_create_model(self):
+        lstore = gtk.ListStore(
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+	    gobject.TYPE_STRING,
+	    gobject.TYPE_STRING,
+	    gobject.TYPE_STRING,
+	    gobject.TYPE_STRING,
+	    gobject.TYPE_STRING)
+	log_data = self.gera_logs()
+        for item in log_data:
+            iter = lstore.append()
+            lstore.set(iter,
+			    LOG_ID, item[LOG_ID],
+			    LOG_PC, item[LOG_PC],
+			    LOG_NAME, item[LOG_NAME],
+			    LOG_AGE, item[LOG_AGE],
+			    LOG_BIRTH, item[LOG_BIRTH],
+			    LOG_RG, item[LOG_RG],
+			    LOG_INI, item[LOG_INI],
+			    LOG_TEMP, item[LOG_TEMP])
+        return lstore
+
+    def __add_log_columns(self, treeview):
+        model = treeview.get_model()
+        
+        renderer = gtk.CellRendererToggle()
+       # column for ID
+        column = gtk.TreeViewColumn('ID', gtk.CellRendererText(),
+                                    text=LOG_ID)
+        column.set_sort_column_id(LOG_ID)
+        treeview.append_column(column)
+
+	# column for PC
+        column = gtk.TreeViewColumn('Pc', gtk.CellRendererText(),
+                                    text=LOG_PC)
+        column.set_sort_column_id(LOG_PC)
+        treeview.append_column(column)
+
+       # column for Name
+        column = gtk.TreeViewColumn('Nome', gtk.CellRendererText(),
+                                    text=LOG_NAME)
+        column.set_sort_column_id(LOG_NAME)
+        treeview.append_column(column)
+
+	# column for Age
+        column = gtk.TreeViewColumn('Idade', gtk.CellRendererText(),
+                                    text=LOG_AGE)
+        column.set_sort_column_id(LOG_AGE)
+        treeview.append_column(column)
+
+	# column for birthday
+        column = gtk.TreeViewColumn('Data de Nascimento', gtk.CellRendererText(),
+                                    text=LOG_BIRTH)
+        column.set_sort_column_id(LOG_BIRTH)
+        treeview.append_column(column)
+
+	# column for ID
+        column = gtk.TreeViewColumn('Rg', gtk.CellRendererText(),
+                                    text=LOG_RG)
+        column.set_sort_column_id(LOG_RG)
+        treeview.append_column(column)
+
+        # columns for begin
+        column = gtk.TreeViewColumn('Início', gtk.CellRendererText(),
+                                    text=LOG_INI)
+        column.set_sort_column_id(LOG_INI)
+        treeview.append_column(column)
+
+        # column for lenght
+        column = gtk.TreeViewColumn('Tempo', gtk.CellRendererText(),
+                                     text=LOG_TEMP)
+        column.set_sort_column_id(LOG_TEMP)
+        treeview.append_column(column)
+	  	 
 
     def __create_model(self):
 
@@ -557,7 +659,6 @@ class Painel(gtk.Window):
 		for i in list:
 		        iter = store.append()
 		        store.set(iter, 0,str(i))
-		print store
 	        return store
 
 
@@ -573,6 +674,11 @@ def update_fields(self):
 
 		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+self.fentry_birth.get_text()+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text()+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
 		connection.commit()
+
+def pontua_id(id):
+	if len(str(id)) == 9:
+		id = id[0:2]+'.'+id[2:5]+'.'+id[5:8]+'-'+id[8]
+	return id
 
 def clear_fields(self):
 	self.fentry_id.set_text(str(''))
