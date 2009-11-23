@@ -19,6 +19,7 @@ except:
 	print 'qiv not found'
 
 class Clock(gtk.Window):
+	"""  Classe gtk para controle de loop e futuras extencoes na tela """
 	def __init__(self,parent=None):
 		gtk.Window.__init__(self)
 		try:
@@ -27,12 +28,9 @@ class Clock(gtk.Window):
 			self.connect('destroy',lambda *w:gtk.main_quit())
 		self.set_title('Tempo Restante')
 		self.timer = gobject.timeout_add(10000,tempo,self)
-		self.set_border_width(5)
-		self.set_default_size(250,30)
-		self.entry = gtk.Statusbar()
-		self.context_id= self.entry.get_context_id('bla')
-		self.add(self.entry)
+
 def get_time():
+	""" funcao que contacta o servidor e retorna o tempo restante da sessao """
 	try:	
 		socket.setdefaulttimeout(1)
 		h = urllib.urlopen('http://'+server_ip+'/'+ip)
@@ -42,6 +40,8 @@ def get_time():
 		print 'Sem contato com o servidor'
 
 def tempo(self):
+	""" Loop executado a cada 10 segundos, responsavel por toda verificacao
+	dos tempos de sessao e controle de fluxo do programa """
 	global gnome_on
 	global hud
 	global first_run
@@ -61,23 +61,19 @@ def tempo(self):
 			gnome_on = False
 	
 		print 't='+str(hud)+'g='+str(gnome_on)+'f='+str(first_run)
-		self.entry.push(self.context_id,str(hud))
 	return True
 
 def killprocess():
+	""" Rotina para encerrar a sessao """
 	exit()	
 
-def n(var):
-	if len(var) < 2:
-		return '0'+var
-	else:
-		return var
-
-
 def main():
+	""" fucao principal """
 	global gnome_on
 	Clock()
 	print hud , gnome_on
+	
+	# 
 	if int(hud) != 0:
 		os.system('/srv/pylan/pylan-clock.py &')
 		os.system('gnome-session 2> /dev/null &')
