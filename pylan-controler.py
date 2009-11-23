@@ -47,8 +47,6 @@ def tempo(self):
 	global first_run
 	hud = get_time()
 	if type(hud) == int: 
-		print hud
-		print type(hud)	
 		if int(hud) != 0 and not gnome_on:
 			print "abrindo gnome"
 			os.system('/srv/pylan/pylan-clock.py &')
@@ -71,7 +69,6 @@ def main():
 	""" fucao principal """
 	global gnome_on
 	Clock()
-	print hud , gnome_on
 	
 	# 
 	if int(hud) != 0:
