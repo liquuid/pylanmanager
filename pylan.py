@@ -262,6 +262,7 @@ class Painel(gtk.Window):
 	self.fentry_search.set_completion(completion)
         completion_model = self.__create_completion_model()
         completion.set_model(completion_model)
+	completion.connect("match-selected", self.search_pressed)
         # Use model column 0 as the text column
         completion.set_text_column(0)
 
@@ -299,7 +300,7 @@ class Painel(gtk.Window):
         fbutton_search = gtk.Button(stock=gtk.STOCK_FIND)
         fbutton_save = gtk.Button(stock=gtk.STOCK_SAVE)
        	 
-	fbutton_search.connect('clicked',self.search_pressed)
+	fbutton_search.connect('clicked',self.search_pressed,None,None)
 	fbutton_clear.connect('clicked',self.clear_pressed)
 	fbutton_add.connect('clicked',self.add_pressed)
 	fbutton_save.connect('clicked',self.save_pressed)
@@ -398,7 +399,11 @@ class Painel(gtk.Window):
 	notebook.insert_page(stat_frame,gtk.Label("Estatísticas"))
 
 	self.show_all()
-    
+   
+    def on_completion_match(self, completion, model, iter):
+        self.set_text(model[iter][COL_TEXT])
+        self.set_position(-1)
+
     def timeout(self,i):
     	if (int(maquinas[i][1])+int(maquinas[i][2]*60)-int(time()))/60.0 < 0:
 		return True
@@ -450,7 +455,13 @@ class Painel(gtk.Window):
 		else:
 			maquinas[i][2] = maquinas[i][2] + ciclo
 
-    def search_pressed(self,button):
+    def search_pressed(self,button,model,iter):
+	""" Você entra com self, button , model e iter. Sendo que button funciona para o botão e model, iter para buscas aa partir do auto completion."""
+	try: 
+		self.fentry_search.set_text(model[iter][0])
+	except:
+		pass
+	
 	type = self.fentry_type_search.get_active()
 	parametro = self.fentry_search.get_text().replace('.','').replace('-','').replace(' ','%').replace('\'','')
 	if type == 0:
