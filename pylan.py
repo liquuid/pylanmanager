@@ -211,6 +211,9 @@ class Painel(gtk.Window):
 	flabel_name.set_alignment(0,1)
         flabel_birth = gtk.Label("Data de Nascimento (dd/mm/aaaa)")
 	flabel_birth.set_alignment(0,1)
+        flabel_age = gtk.Label("Idade")
+	flabel_age.set_alignment(0,1)
+	self.flabel_age_num = gtk.Label()
         flabel_sex = gtk.Label("Sexo")
 	flabel_sex.set_alignment(0,1)
         flabel_id = gtk.Label("RG")
@@ -270,6 +273,8 @@ class Painel(gtk.Window):
         box_id_direito.pack_start(self.fentry_id)
         box_id_esquerdo.pack_start(flabel_sex)
         box_id_direito.pack_start(self.fentry_sex)
+        box_id_esquerdo.pack_start(flabel_age)
+        box_id_direito.pack_start(self.flabel_age_num)
         box_id_esquerdo.pack_start(flabel_birth)
         box_id_direito.pack_start(self.fentry_birth)
         box_id_esquerdo.pack_start(flabel_esco)
@@ -465,6 +470,12 @@ class Painel(gtk.Window):
 	self.fentry_id.set_text(id)
 	self.fentry_name.set_text(str(dados[1]))
 	self.fentry_birth.set_text(str(dados[3]))
+	age = date2years(dados[3])
+	if int(age) >= 0:
+		self.flabel_age_num.set_text(date2years(dados[3])+' anos')
+	else:
+		self.flabel_age_num.set_text("data de nascimento inválida")
+
 	self.fentry_addr.set_text(str(dados[5]))
 	self.fentry_cep.set_text(str(dados[6]))
 	self.fentry_tel.set_text(str(dados[7]))
@@ -486,7 +497,7 @@ class Painel(gtk.Window):
 	list = cur.fetchall()
 	logs=[]
 	for i in xrange(len(list)):
-		logs.append([list[i][0],list[i][3]+' ( '+list[i][4]+' ) ',list[i][1],'',list[i][7],pontua_id(str(list[i][2])),list[i][5],'+'+str(list[i][6])+'minutos'])
+		logs.append([list[i][0],list[i][3]+' ( '+list[i][4]+' ) ',list[i][1],date2years(list[i][7]),list[i][7],pontua_id(str(list[i][2])),list[i][5],'+'+str(list[i][6])+'minutos'])
 	return logs
 
 
@@ -757,6 +768,20 @@ def tempo(self):
 
         self.statusbar.push(self.context_id,str(datetime.now()))
         return True
+
+
+def date2years(date):
+	""" Pega uma data no formato (dd/mm/aaaa) e converte no número de anos corridos desde então """
+	date = date.split('/')
+	agora = datetime.now()
+	try:
+		if agora.month > int(date[1]):
+			return str(agora.year - int(date[2]))
+		if agora.month == int(date[1]) and agora.day >= int(date[0]):
+			return str(agora.year - int(date[2]))
+		return str(((agora.year - int(date[2])))-1)
+	except:
+		return -1
 
 
 def fake():
