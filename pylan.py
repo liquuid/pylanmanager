@@ -98,12 +98,52 @@ class Painel(gtk.Window):
 
 ###############################################################################
 # Aba de logs
-	log_vbox = gtk.VBox(False,5)
+	log_vbox = gtk.VBox(False,0)
+	log_htopo = gtk.HBox(False,5)
+	log_hdown = gtk.HBox(False,5)
+	log_hmid = gtk.HBox(False,5)
+
 	log_frame = gtk.Frame("Histórico de acessos")
 	log_sw = gtk.ScrolledWindow()
         log_sw.set_shadow_type(gtk.SHADOW_ETCHED_IN)
         log_sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        log_vbox.pack_start(log_sw)
+	log_vbox.pack_start(log_htopo,True,False,0)
+	log_vbox.pack_start(log_hmid,True,True,0)
+       	log_vbox.pack_end(log_hdown,True,False,0)
+        
+	log_month_entry=gtk.combo_box_new_text()
+        log_month_entry.append_text("Janeiro")
+        log_month_entry.append_text("Fevereiro")
+        log_month_entry.append_text("Março")
+        log_month_entry.append_text("Abril")
+        log_month_entry.append_text("Maio")
+        log_month_entry.append_text("Junho")
+        log_month_entry.append_text("Julho")
+        log_month_entry.append_text("Agosto")
+        log_month_entry.append_text("Setembro")
+        log_month_entry.append_text("Outubro")
+        log_month_entry.append_text("Novembro")
+        log_month_entry.append_text("Dezembro")
+
+	log_ano_entry = gtk.Entry()
+
+
+	log_age_histogram = gtk.Button("Histograma com Idades")
+	log_sex_pie = gtk.Button("Sexo")
+	log_use_graph = gtk.Button("Distribuição por horário")
+	log_build_cvs = gtk.Button("Gerar arquivo CVS")
+
+	log_htopo.pack_start(log_month_entry,False,False,0)
+	log_htopo.pack_start(gtk.Label('Ano : '),False,False,0)
+	log_htopo.pack_start(log_ano_entry,False,False,0)
+	log_search_button = gtk.Button(stock=gtk.STOCK_FIND)
+	log_htopo.pack_end(log_search_button,False,False,0)
+        log_hmid.pack_start(log_sw,True,True,0)
+	log_hdown.pack_start(log_age_histogram)
+	log_hdown.pack_start(log_sex_pie)
+	log_hdown.pack_start(log_use_graph)
+	log_hdown.pack_start(log_build_cvs)
+
 	log_treeview = gtk.TreeView()
 	# create tree model
 	log_model = self.__log_create_model()
@@ -504,7 +544,7 @@ class Painel(gtk.Window):
 	    update_fields(self)
 
     def gera_logs(self):
-	cur.execute('select * from log;')
+	cur.execute('select * from log order by -id limit 250 ;')
 	list = cur.fetchall()
 	logs=[]
 	for i in xrange(len(list)):
