@@ -81,7 +81,7 @@ class Painel(gtk.Window):
         except AttributeError:
            self.connect('destroy', lambda *w: gtk.main_quit())
         self.set_title('PyLan Manager')
-        self.set_border_width(5)
+	self.set_border_width(5)
         self.set_default_size(640, 400)
 	self.timer = gobject.timeout_add(1000,tempo,self)
 	self.vars=[]
@@ -111,32 +111,39 @@ class Painel(gtk.Window):
 	log_vbox.pack_start(log_hmid,True,True,0)
        	log_vbox.pack_end(log_hdown,True,False,0)
         
-	log_month_entry=gtk.combo_box_new_text()
-        log_month_entry.append_text("Janeiro")
-        log_month_entry.append_text("Fevereiro")
-        log_month_entry.append_text("Março")
-        log_month_entry.append_text("Abril")
-        log_month_entry.append_text("Maio")
-        log_month_entry.append_text("Junho")
-        log_month_entry.append_text("Julho")
-        log_month_entry.append_text("Agosto")
-        log_month_entry.append_text("Setembro")
-        log_month_entry.append_text("Outubro")
-        log_month_entry.append_text("Novembro")
-        log_month_entry.append_text("Dezembro")
+	self.log_month_entry=gtk.combo_box_new_text()
+        self.log_month_entry.append_text("Janeiro")
+        self.log_month_entry.append_text("Fevereiro")
+        self.log_month_entry.append_text("Março")
+        self.log_month_entry.append_text("Abril")
+        self.log_month_entry.append_text("Maio")
+        self.log_month_entry.append_text("Junho")
+        self.log_month_entry.append_text("Julho")
+        self.log_month_entry.append_text("Agosto")
+        self.log_month_entry.append_text("Setembro")
+        self.log_month_entry.append_text("Outubro")
+        self.log_month_entry.append_text("Novembro")
+        self.log_month_entry.append_text("Dezembro")
+	
+	self.log_month_entry.set_active(datetime.now().month-1)
 
-	log_ano_entry = gtk.Entry()
-
+	self.log_ano_entry = gtk.Entry()
+	self.log_ano_entry.set_text(str((datetime.now().year)))
 
 	log_age_histogram = gtk.Button("Histograma com Idades")
+        log_age_histogram.connect("clicked",launch_hist)
+
 	log_sex_pie = gtk.Button("Sexo")
 	log_use_graph = gtk.Button("Distribuição por horário")
 	log_build_cvs = gtk.Button("Gerar arquivo CVS")
 
-	log_htopo.pack_start(log_month_entry,False,False,0)
+	log_htopo.pack_start(self.log_month_entry,False,False,0)
 	log_htopo.pack_start(gtk.Label('Ano : '),False,False,0)
-	log_htopo.pack_start(log_ano_entry,False,False,0)
+	log_htopo.pack_start(self.log_ano_entry,False,False,0)
 	log_search_button = gtk.Button(stock=gtk.STOCK_FIND)
+
+	log_search_button.connect("clicked",self.gera_logs)
+
 	log_htopo.pack_end(log_search_button,False,False,0)
         log_hmid.pack_start(log_sw,True,True,0)
 	log_hdown.pack_start(log_age_histogram)
@@ -144,16 +151,12 @@ class Painel(gtk.Window):
 	log_hdown.pack_start(log_use_graph)
 	log_hdown.pack_start(log_build_cvs)
 
-	log_treeview = gtk.TreeView()
-	# create tree model
-	log_model = self.__log_create_model()
-	# create tree view
-	log_treeview = gtk.TreeView(log_model)
-	log_treeview.set_rules_hint(True)
-#log_treeview.set_search_column(COLUMN_DESCRIPTION)
-	log_sw.add(log_treeview)
+	self.log_text = gtk.TextView()
+	log_sw.add(self.log_text)
 	log_frame.add(log_vbox)
-        self.__add_log_columns(log_treeview)
+        self.buffer = self.log_text.get_buffer()
+	self.iter = self.buffer.get_iter_at_offset(0)
+
 ###############################################################################
 # Aba de estatísticas 
 	
@@ -440,6 +443,7 @@ class Painel(gtk.Window):
 
 	self.show_all()
    
+   
     def on_completion_match(self, completion, model, iter):
         self.set_text(model[iter][COL_TEXT])
         self.set_position(-1)
@@ -543,93 +547,19 @@ class Painel(gtk.Window):
     def save_pressed(self,button):
 	    update_fields(self)
 
-    def gera_logs(self):
-	cur.execute('select * from log order by -id limit 250 ;')
+    def gera_logs(self,bla):
+	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
+	self.buffer.set_text("")
+	cur.execute('select * from log where date like \''+date+'\' order by -id ;')
 	list = cur.fetchall()
-	logs=[]
+	logs=''
 	for i in xrange(len(list)):
-		logs.append([list[i][0],list[i][3]+' ( '+list[i][4]+' ) ',list[i][1],date2years(list[i][7]),list[i][7],pontua_id(str(list[i][2])),list[i][5],'+'+str(list[i][6])+'minutos'])
+		logs=logs+'sessão: '+str(list[i][0])+', '+str(list[i][3])+' ( '+str(list[i][4])+' ) '+' , nome =  '+str(list[i][1])+' , idade = '+str(date2years(list[i][7]))+' anos , nascimento: '+str(list[i][7])+' , rg: '+str(pontua_id(str(list[i][2])))+' , data =  '+str(list[i][5])+' , '+str(list[i][6])+' minutos\n'
+	self.buffer.set_text(logs)
 	return logs
-
-
+    def log_refresh(self,button):
+	self.buffer.insert(self.iter,"dd\n")	
     
-    def __log_create_model(self):
-        lstore = gtk.ListStore(
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-            gobject.TYPE_STRING,
-	    gobject.TYPE_STRING,
-	    gobject.TYPE_STRING,
-	    gobject.TYPE_STRING,
-	    gobject.TYPE_STRING,
-	    gobject.TYPE_STRING)
-	log_data = self.gera_logs()
-        for item in log_data:
-            iter = lstore.append()
-            lstore.set(iter,
-			    LOG_ID, item[LOG_ID],
-			    LOG_PC, item[LOG_PC],
-			    LOG_NAME, item[LOG_NAME],
-			    LOG_AGE, item[LOG_AGE],
-			    LOG_BIRTH, item[LOG_BIRTH],
-			    LOG_RG, item[LOG_RG],
-			    LOG_INI, item[LOG_INI],
-			    LOG_TEMP, item[LOG_TEMP])
-        return lstore
-
-    def __add_log_columns(self, treeview):
-        model = treeview.get_model()
-        
-        renderer = gtk.CellRendererToggle()
-       # column for ID
-        column = gtk.TreeViewColumn('ID', gtk.CellRendererText(),
-                                    text=LOG_ID)
-        column.set_sort_column_id(LOG_ID)
-        treeview.append_column(column)
-
-	# column for PC
-        column = gtk.TreeViewColumn('Pc', gtk.CellRendererText(),
-                                    text=LOG_PC)
-        column.set_sort_column_id(LOG_PC)
-        treeview.append_column(column)
-
-       # column for Name
-        column = gtk.TreeViewColumn('Nome', gtk.CellRendererText(),
-                                    text=LOG_NAME)
-        column.set_sort_column_id(LOG_NAME)
-        treeview.append_column(column)
-
-	# column for Age
-        column = gtk.TreeViewColumn('Idade', gtk.CellRendererText(),
-                                    text=LOG_AGE)
-        column.set_sort_column_id(LOG_AGE)
-        treeview.append_column(column)
-
-	# column for birthday
-        column = gtk.TreeViewColumn('Data de Nascimento', gtk.CellRendererText(),
-                                    text=LOG_BIRTH)
-        column.set_sort_column_id(LOG_BIRTH)
-        treeview.append_column(column)
-
-	# column for ID
-        column = gtk.TreeViewColumn('Rg', gtk.CellRendererText(),
-                                    text=LOG_RG)
-        column.set_sort_column_id(LOG_RG)
-        treeview.append_column(column)
-
-        # columns for begin
-        column = gtk.TreeViewColumn('Início', gtk.CellRendererText(),
-                                    text=LOG_INI)
-        column.set_sort_column_id(LOG_INI)
-        treeview.append_column(column)
-
-        # column for lenght
-        column = gtk.TreeViewColumn('Tempo', gtk.CellRendererText(),
-                                     text=LOG_TEMP)
-        column.set_sort_column_id(LOG_TEMP)
-        treeview.append_column(column)
-	  	 
-
     def __create_model(self):
 
         # create list store
@@ -730,6 +660,20 @@ class Painel(gtk.Window):
 		        store.set(iter, 0,str(i))
 	        return store
 
+def launch_hist(self):
+	param = ''
+	for i in agelist():
+		param=param+str(i)+','
+	os.system('/srv/pylan/hist.py '+param.strip(',')+' &')
+
+def agelist():
+	list=[]
+	cur.execute('select birthday from users')
+	for i in cur.fetchall():
+		list.append(date2years(i[0]))
+	return list
+
+
 
 def cleanup_id(string):
 	return string.replace('.','').replace('-','')
@@ -743,6 +687,11 @@ def update_fields(self):
 
 		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+self.fentry_birth.get_text()+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text()+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
 		connection.commit()
+
+def digitos(dig):
+	if len(dig) < 2:
+		dig = '0'+dig
+	return dig
 
 def pontua_id(id):
 	if len(str(id)) == 9:
