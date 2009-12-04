@@ -89,6 +89,7 @@ class Painel(gtk.Window):
 	self.box_matrix=[]
 	self.box_line=[] 
 	self.lista_controle = []
+	self.csv_path = []
 	notebook = gtk.Notebook()
 	notebook.set_tab_pos(gtk.POS_TOP)
 	
@@ -135,21 +136,22 @@ class Painel(gtk.Window):
 
 	log_sex_pie = gtk.Button("Sexo")
 	log_use_graph = gtk.Button("Distribuição por horário")
-	log_build_cvs = gtk.Button("Gerar arquivo CVS")
+	log_build_csv = gtk.Button("Gerar arquivo CSV")
 
 	log_htopo.pack_start(self.log_month_entry,False,False,0)
 	log_htopo.pack_start(gtk.Label('Ano : '),False,False,0)
 	log_htopo.pack_start(self.log_ano_entry,False,False,0)
 	log_search_button = gtk.Button(stock=gtk.STOCK_FIND)
 
-	log_search_button.connect("clicked",self.gera_logs)
+	log_search_button.connect("clicked",self.gera_logs,False)
+	log_build_csv.connect("clicked",self.save_log_dialog)
 
 	log_htopo.pack_end(log_search_button,False,False,0)
         log_hmid.pack_start(log_sw,True,True,0)
 	log_hdown.pack_start(log_age_histogram)
 	log_hdown.pack_start(log_sex_pie)
 	log_hdown.pack_start(log_use_graph)
-	log_hdown.pack_start(log_build_cvs)
+	log_hdown.pack_start(log_build_csv)
 
 	self.log_text = gtk.TextView()
 	log_sw.add(self.log_text)
@@ -386,6 +388,10 @@ class Painel(gtk.Window):
 #########################################################################
 # Painel de controle das máquinas
 
+	print sex_relative(self)
+	print sex_absolute(self)
+
+
 	painel_frame = gtk.Frame("Controle")
 
 
@@ -442,8 +448,26 @@ class Painel(gtk.Window):
 	notebook.insert_page(stat_frame,gtk.Label("Estatísticas"))
 
 	self.show_all()
-   
-   
+    def save_log_dialog(self,button):
+	      chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+	      filter = gtk.FileFilter()
+	      filter.set_name("CSV")
+	      filter.add_pattern("*.csv")
+	      chooser.add_filter(filter)
+	      filter = gtk.FileFilter()
+	      filter.set_name("Todos arquivos")
+	      filter.add_pattern("*")
+	      chooser.add_filter(filter)
+
+	      response = chooser.run()
+	      if response == gtk.RESPONSE_OK:
+		      self.csv_path = chooser.get_filename()
+		      self.save_csv()
+		      self.opendialog("CSV Salvo com sucesso")
+	      elif response == gtk.RESPONSE_CANCEL:
+		      print 'Closed, no files selected'
+	      chooser.destroy()
+
     def on_completion_match(self, completion, model, iter):
         self.set_text(model[iter][COL_TEXT])
         self.set_position(-1)
@@ -546,15 +570,34 @@ class Painel(gtk.Window):
 	    clear_fields(self)
     def save_pressed(self,button):
 	    update_fields(self)
+    
+    def save_csv(self):
+	print "csv"
+	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
+	self.buffer.set_text("")
+	cur.execute('select * from log where date like \''+date+'\' order by id ;')
+	list = cur.fetchall()
+	cur.execute('select gender from log inner join users on users.id = log.userid where log.date like \''+date+'\' order by log.id;')
+	sex = cur.fetchall()
+	logs='número da sessão, Máquina , IP , Nome , idade , sexo , nascimento, RG, Data de acesso, duração da sessão\n'
+	for i in xrange(len(list)):
+		logs=logs+str(list[i][0])+','+str(list[i][3])+','+str(list[i][4])+','+str(list[i][1])+','+str(date2years(list[i][7]))+','+which_sex(sex[i][0])+','+str(list[i][7])+','+str(pontua_id(str(list[i][2])))+','+str(list[i][5])+','+str(list[i][6])+'\n'
+	print self.csv_path	
+	fd = open(self.csv_path,'w')
+	fd.write(logs)
+	fd.close()	
 
-    def gera_logs(self,bla):
+    def gera_logs(self,button,save):
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
 	self.buffer.set_text("")
 	cur.execute('select * from log where date like \''+date+'\' order by -id ;')
 	list = cur.fetchall()
+	cur.execute('select gender from log inner join users on users.id = log.userid where log.date like \''+date+'\' order by -log.id;')
+	sex = cur.fetchall()
+
 	logs=''
 	for i in xrange(len(list)):
-		logs=logs+'sessão: '+str(list[i][0])+', '+str(list[i][3])+' ( '+str(list[i][4])+' ) '+' , nome =  '+str(list[i][1])+' , idade = '+str(date2years(list[i][7]))+' anos , nascimento: '+str(list[i][7])+' , rg: '+str(pontua_id(str(list[i][2])))+' , data =  '+str(list[i][5])+' , '+str(list[i][6])+' minutos\n'
+		logs=logs+'sessão: '+str(list[i][0])+', '+str(list[i][3])+' ( '+str(list[i][4])+' ) '+' , nome =  '+str(list[i][1])+' , idade = '+str(date2years(list[i][7]))+' anos , sexo = '+which_sex(sex[i][0])+' , nascimento: '+str(list[i][7])+' , rg: '+str(pontua_id(str(list[i][2])))+' , data =  '+str(list[i][5])+' , '+str(list[i][6])+' minutos\n'
 	self.buffer.set_text(logs)
 	return logs
     def log_refresh(self,button):
@@ -660,11 +703,48 @@ class Painel(gtk.Window):
 		        store.set(iter, 0,str(i))
 	        return store
 
+def which_sex(num):
+	if num == 0:
+	    return "Feminino"
+	else:
+	    return "Masculino"
+
+
 def launch_hist(self):
 	param = ''
 	for i in agelist():
 		param=param+str(i)+','
 	os.system('/srv/pylan/hist.py '+param.strip(',')+' &')
+
+def launch_sex(self):
+	param = ''
+	for i in agelist():
+		param=param+str(i)+','
+	os.system('/srv/pylan/hist.py '+param.strip(',')+' &')
+
+def sex_relative(self):
+	list=[]
+	h=0
+	m=0
+	cur.execute('select name,gender from log inner join users on users.id = log.userid;')
+	for i in cur.fetchall():
+		if int(i[1])==0:
+			m=m+1
+		else:
+			h=h+1
+	return [m,h]
+
+def sex_absolute(self):
+	list=[]
+	h=0
+	m=0
+	cur.execute('select distinct name,gender from log inner join users on users.id = log.userid;')
+	for i in cur.fetchall():
+		if int(i[1])==0:
+			m=m+1
+		else:
+			h=h+1
+	return [m,h]
 
 def agelist():
 	list=[]
