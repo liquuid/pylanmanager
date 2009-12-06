@@ -135,6 +135,8 @@ class Painel(gtk.Window):
         log_age_histogram.connect("clicked",launch_hist)
 
 	log_sex_pie = gtk.Button("Sexo")
+	log_sex_pie.connect("clicked",self.launch_pie)
+
 	log_use_graph = gtk.Button("Distribuição por horário")
 	log_build_csv = gtk.Button("Gerar arquivo CSV")
 
@@ -388,8 +390,8 @@ class Painel(gtk.Window):
 #########################################################################
 # Painel de controle das máquinas
 
-	print sex_relative(self)
-	print sex_absolute(self)
+	#print sex_relative(self)
+	#print sex_absolute(self)
 
 
 	painel_frame = gtk.Frame("Controle")
@@ -703,6 +705,50 @@ class Painel(gtk.Window):
 		        store.set(iter, 0,str(i))
 	        return store
 
+    def launch_pie(self,button):
+    	param = ''
+	for i in abs2percent(self.sex_relative(self)):
+		param=param+str(i)+','
+	abs= str(self.sex_relative(self)).strip('[').strip(']').replace(',','')
+	os.system('/srv/pylan/pie.py '+param.strip(',')+' '+abs+' '+'"Mulheres x Homens, Total dos visitantes "'+' &')
+	print '/srv/pylan/pie.py '+param.strip(',')+' '+abs+' '+'"Mulheres x Homens, Total dos visitantes "'+' &' 
+	param = ''
+	for i in abs2percent(self.sex_absolute(self)):
+		param=param+str(i)+','
+	abs= str(self.sex_absolute(self)).strip('[').strip(']')
+	os.system('/srv/pylan/pie.py '+param.strip(',')+' '+abs+' '+'"Mulheres x Homens, Visitantes unicos"'+' &')
+
+    def sex_relative(self,button):
+	list=[]
+	h=0
+	m=0
+	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
+	cur.execute('select name,gender from log inner join users on users.id = log.userid where date like "'+date+'";')
+	for i in cur.fetchall():
+		if int(i[1])==0:
+			m=m+1
+		else:
+			h=h+1
+	return [m,h]
+
+    def sex_absolute(self,button):
+	list=[]
+	h=0
+	m=0
+	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
+	cur.execute('select distinct name,gender from log inner join users on users.id = log.userid where date like "'+date+'";')
+	for i in cur.fetchall():
+		if int(i[1])==0:
+			m=m+1
+		else:
+			h=h+1
+	return [m,h]
+
+def abs2percent(nums):
+	m,h=nums
+	return [m*100.0/sum([m,h]),h*100.0/sum([m,h])]
+
+
 def which_sex(num):
 	if num == 0:
 	    return "Feminino"
@@ -715,36 +761,6 @@ def launch_hist(self):
 	for i in agelist():
 		param=param+str(i)+','
 	os.system('/srv/pylan/hist.py '+param.strip(',')+' &')
-
-def launch_sex(self):
-	param = ''
-	for i in agelist():
-		param=param+str(i)+','
-	os.system('/srv/pylan/hist.py '+param.strip(',')+' &')
-
-def sex_relative(self):
-	list=[]
-	h=0
-	m=0
-	cur.execute('select name,gender from log inner join users on users.id = log.userid;')
-	for i in cur.fetchall():
-		if int(i[1])==0:
-			m=m+1
-		else:
-			h=h+1
-	return [m,h]
-
-def sex_absolute(self):
-	list=[]
-	h=0
-	m=0
-	cur.execute('select distinct name,gender from log inner join users on users.id = log.userid;')
-	for i in cur.fetchall():
-		if int(i[1])==0:
-			m=m+1
-		else:
-			h=h+1
-	return [m,h]
 
 def agelist():
 	list=[]
