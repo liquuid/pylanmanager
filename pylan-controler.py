@@ -62,7 +62,6 @@ def tempo(self):
 	if type(hud) == int: 
 		if int(hud) != 0 and not gnome_on:
 			print "abrindo gnome"
-			time = hud
 			os.system('/srv/pylan/pylan-clock.py &')
 			os.system('gnome-session ?> /dev/null &')
 			gnome_on = True
@@ -70,7 +69,6 @@ def tempo(self):
 		if int(hud) == 0 and first_run:
 			killprocess() 
 			gnome_on = False
-		time = hud
 		print 't='+str(hud)+'g='+str(gnome_on)+'f='+str(first_run)
 	return True
 

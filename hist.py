@@ -2,8 +2,6 @@
 # _*_ coding: UTF-8 _*_
 
 import sys
-import numpy as np
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 mu, sigma = 20, 15

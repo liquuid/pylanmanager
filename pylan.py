@@ -6,7 +6,6 @@ import gobject
 import gtk
 from datetime import datetime
 from time import time
-import sys
 import os
 import sqlite3
 
@@ -252,7 +251,6 @@ class Painel(gtk.Window):
         frame_id= gtk.Frame('Identificação')
         frame_contato= gtk.Frame('Contato')
 	frame_controle = gtk.Frame('Iniciar sessão no computador :')
-        fframe4 = gtk.Frame('Busca')
 
         flabel_name = gtk.Label("Nome")
 	flabel_name.set_alignment(0,1)
@@ -685,7 +683,6 @@ class Painel(gtk.Window):
 
             model.set(iter, column, list_conf[path][COLUMN_NAME])
     	elif column == COLUMN_IP:
-		old_text = model.get_value(iter,column)
 		list_conf[path][COLUMN_IP] = new_text
 
 		model.set(iter,column, list_conf[path][COLUMN_IP])
@@ -719,7 +716,6 @@ class Painel(gtk.Window):
 	os.system('/srv/pylan/pie.py '+param.strip(',')+' '+abs+' '+'"Mulheres x Homens, Visitantes unicos"'+' &')
 
     def sex_relative(self,button):
-	list=[]
 	h=0
 	m=0
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
@@ -732,7 +728,6 @@ class Painel(gtk.Window):
 	return [m,h]
 
     def sex_absolute(self,button):
-	list=[]
 	h=0
 	m=0
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
