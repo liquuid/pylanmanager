@@ -136,7 +136,7 @@ class Painel(gtk.Window):
 	log_sex_pie = gtk.Button("Sexo")
 	log_sex_pie.connect("clicked",self.launch_pie)
 
-	log_use_graph = gtk.Button("Distribuição por horário")
+#	log_use_graph = gtk.Button("Distribuição por horário")
 	log_build_csv = gtk.Button("Gerar arquivo CSV")
 
 	log_htopo.pack_start(self.log_month_entry,False,False,0)
@@ -151,7 +151,7 @@ class Painel(gtk.Window):
         log_hmid.pack_start(log_sw,True,True,0)
 	log_hdown.pack_start(log_age_histogram)
 	log_hdown.pack_start(log_sex_pie)
-	log_hdown.pack_start(log_use_graph)
+#	log_hdown.pack_start(log_use_graph)
 	log_hdown.pack_start(log_build_csv)
 
 	self.log_text = gtk.TextView()
@@ -163,7 +163,7 @@ class Painel(gtk.Window):
 ###############################################################################
 # Aba de estatísticas 
 	
-	stat_frame = gtk.Frame("Estatísticas")
+#	stat_frame = gtk.Frame("Estatísticas")
 
 ###############################################################################
 #
@@ -388,10 +388,6 @@ class Painel(gtk.Window):
 #########################################################################
 # Painel de controle das máquinas
 
-	#print sex_relative(self)
-	#print sex_absolute(self)
-
-
 	painel_frame = gtk.Frame("Controle")
 
 
@@ -445,7 +441,7 @@ class Painel(gtk.Window):
 	notebook.insert_page(frame_form_root,gtk.Label("Cadastro"))
 	notebook.insert_page(config_frame,gtk.Label("Configuração"))
 	notebook.insert_page(log_frame,gtk.Label("Histórico"))
-	notebook.insert_page(stat_frame,gtk.Label("Estatísticas"))
+	#notebook.insert_page(stat_frame,gtk.Label("Estatísticas"))
 
 	self.show_all()
     def save_log_dialog(self,button):
