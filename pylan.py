@@ -576,8 +576,11 @@ class Painel(gtk.Window):
 	cur.execute('select gender from log inner join users on users.id = log.userid where log.date like \''+date+'\' order by log.id;')
 	sex = cur.fetchall()
 	logs='número da sessão, Máquina , IP , Nome , idade , sexo , nascimento, RG, Data de acesso, duração da sessão\n'
-	for i in xrange(len(list)):
-		logs=logs+str(list[i][0])+','+str(list[i][3])+','+str(list[i][4])+','+str(list[i][1])+','+str(date2years(list[i][7]))+','+which_sex(sex[i][0])+','+str(list[i][7])+','+str(pontua_id(str(list[i][2])))+','+str(list[i][5])+','+str(list[i][6])+'\n'
+	try:
+		for i in xrange(len(list)):
+			logs=logs+str(list[i][0])+','+str(list[i][3])+','+str(list[i][4])+','+str(list[i][1])+','+str(date2years(list[i][7]))+','+which_sex(sex[i][0])+','+str(list[i][7])+','+str(pontua_id(str(list[i][2])))+','+str(list[i][5])+','+str(list[i][6])+'\n'
+	except:
+		print list[i]
 	print self.csv_path	
 	fd = open(self.csv_path,'w')
 	fd.write(logs)
@@ -592,9 +595,16 @@ class Painel(gtk.Window):
 	sex = cur.fetchall()
 
 	logs=''
-	for i in xrange(len(list)):
-		logs=logs+'sessão: '+str(list[i][0])+', '+str(list[i][3])+' ( '+str(list[i][4])+' ) '+' , nome =  '+str(list[i][1])+' , idade = '+str(date2years(list[i][7]))+' anos , sexo = '+which_sex(sex[i][0])+' , nascimento: '+str(list[i][7])+' , rg: '+str(pontua_id(str(list[i][2])))+' , data =  '+str(list[i][5])+' , '+str(list[i][6])+' minutos\n'
+	try:
+		for i in xrange(len(list)):
+			logs=logs+'sessão: '+str(list[i][0])+', '+str(list[i][3])+' ( '+str(list[i][4])+' ) '+' , nome =  '+str(list[i][1])+' , idade = '+str(date2years(list[i][7]))+' anos , sexo = '+which_sex(sex[i][0])+' , nascimento: '+str(list[i][7])+' , rg: '+str(pontua_id(str(list[i][2])))+' , data =  '+str(list[i][5])+' , '+str(list[i][6])+' minutos\n'
+	except:
+		print list[i]
+	
 	self.buffer.set_text(logs)
+	
+	
+	
 	return logs
     def log_refresh(self,button):
 	self.buffer.insert(self.iter,"dd\n")	
@@ -717,10 +727,13 @@ class Painel(gtk.Window):
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
 	cur.execute('select name,gender from log inner join users on users.id = log.userid where date like "'+date+'";')
 	for i in cur.fetchall():
-		if int(i[1])==0:
-			m=m+1
-		else:
-			h=h+1
+		try:
+			if int(i[1])==0:
+				m=m+1
+			else:
+				h=h+1
+		except:
+			print i[1]
 	return [m,h]
 
     def sex_absolute(self,button):
@@ -729,10 +742,13 @@ class Painel(gtk.Window):
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
 	cur.execute('select distinct name,gender from log inner join users on users.id = log.userid where date like "'+date+'";')
 	for i in cur.fetchall():
-		if int(i[1])==0:
-			m=m+1
-		else:
-			h=h+1
+		try:
+			if int(i[1])==0:
+				m=m+1
+			else:
+				h=h+1
+		except:
+			print i[1]
 	return [m,h]
 
 def abs2percent(nums):
@@ -755,7 +771,7 @@ def launch_hist(self):
 
 def agelist():
 	list=[]
-	cur.execute('select birthday from users')
+	cur.execute('select birthday from users where length(birthday)==10;')
 	for i in cur.fetchall():
 		list.append(date2years(i[0]))
 	return list
