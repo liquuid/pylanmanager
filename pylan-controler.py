@@ -78,7 +78,7 @@ def killprocess():
 	exit()	
 
 def main():
-	""" fucao principal """
+	""" funcao principal """
 	global gnome_on
 	Clock()
 	
