@@ -37,7 +37,7 @@ def tempo(self):
 		hud = str(n(hor)+':'+n(min)+':'+n(seg))
 	except:
 		hud = 'sem contato com o servidor'
-
+	
 	self.entry.push(self.context_id,str(hud))
 	return True
 

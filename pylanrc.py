@@ -24,7 +24,7 @@ def get_serverip():
 
 def get_ip():
 	interface = get_interface()
-	command = 'LANG=C /sbin/ifconfig '+interface+' | grep "inet add" | cut -d ":" -f 2| sed "s/ //g" | sed "s/Bcast//g"'
+	command = 'LANG=C /sbin/ifconfig '+interface+' | grep "inet add" | cut -d ":" -f 2| sed "s/ //g" | sed "s/Bcast//g" | sed "s/Mask//g"'
 	proc = subprocess.Popen(command,stdout=subprocess.PIPE,shell=True)
 	os.waitpid(proc.pid,0)
 	return proc.stdout.read().strip()

@@ -13,6 +13,8 @@ hud = 0
 gnome_on = False
 first_run=False
 time=0
+aviso5min=False
+
 try:
 	os.system('qiv --root /srv/pylan/bg.png')
 except:
@@ -58,6 +60,8 @@ def tempo(self):
 	global hud
 	global first_run
 	global time
+	global aviso5min
+
 	hud = get_time()
 	if type(hud) == int: 
 		if int(hud) != 0 and not gnome_on:
@@ -69,6 +73,13 @@ def tempo(self):
 		if int(hud) == 0 and first_run:
 			killprocess() 
 			gnome_on = False
+
+		if int(hud) < 300 and not aviso5min :
+			aviso5min=True
+			os.system('zenity --info --text "Faltam 5 minutos para o término da sessão. \n \n Salve seus arquivos abertos" --title "Salve seus arquivos"
+')		
+		
+		
 		print 't='+str(hud)+'g='+str(gnome_on)+'f='+str(first_run)
 	return True
 
