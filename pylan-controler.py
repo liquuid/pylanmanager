@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# _*_ coding: UTF-8 _*_
 
 import gtk,gobject,os
 import urllib,pylanrc
@@ -66,6 +67,7 @@ def tempo(self):
 	if type(hud) == int: 
 		if int(hud) != 0 and not gnome_on:
 			print "abrindo gnome"
+			time = hud
 			os.system('/srv/pylan/pylan-clock.py &')
 			os.system('gnome-session ?> /dev/null &')
 			gnome_on = True
@@ -73,11 +75,11 @@ def tempo(self):
 		if int(hud) == 0 and first_run:
 			killprocess() 
 			gnome_on = False
+		time = hud
 
-		if int(hud) < 300 and not aviso5min :
+		if int(hud) < 300 and int(hud) != 0 and not aviso5min :
 			aviso5min=True
-			os.system('zenity --info --text "Faltam 5 minutos para o término da sessão. \n \n Salve seus arquivos abertos" --title "Salve seus arquivos"
-')		
+			os.system('zenity --info --text "Faltam 5 minutos para o término da sessão. \n \n Salve seus arquivos abertos" --title "Salve seus arquivos" &')		
 		
 		
 		print 't='+str(hud)+'g='+str(gnome_on)+'f='+str(first_run)
@@ -86,6 +88,8 @@ def tempo(self):
 def killprocess():
 	""" Rotina para encerrar a sessao """
 	print "fechando gnome"
+	os.system('find /home/livre/ ! -name ".xinitrc" -exec rm -rf {} \;')
+	os.system('cp -r /var/local/livre/ /home/')
 	exit()	
 
 def main():
