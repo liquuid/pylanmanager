@@ -246,7 +246,7 @@ class Painel(gtk.Window):
         fhbox6 = gtk.HBox(False,1)
         fhbox7 = gtk.HBox(False,1)
 
-#	fcontrolebox = gtk.HBox(False,1)
+	fhbox_idade = gtk.HBox(False,1)
 
         frame_id= gtk.Frame('Identificação')
         frame_contato= gtk.Frame('Contato')
@@ -277,7 +277,20 @@ class Painel(gtk.Window):
 
         self.fentry_name  = gtk.Entry()
         self.fentry_id = gtk.Entry(max=15)
-        self.fentry_birth  = gtk.Entry(max=10)
+
+	self.fentry_bday = gtk.combo_box_new_text()
+	for i in xrange(31):
+		self.fentry_bday.append_text(str(i+1))
+
+	self.fentry_bmonth = gtk.combo_box_new_text()
+	for i in ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]:
+		self.fentry_bmonth.append_text(i)
+	
+	self.fentry_byear = gtk.combo_box_new_text()
+	for i in xrange(datetime.now().year-5,datetime.now().year-120,-1):
+		self.fentry_byear.append_text(str(i))
+	
+
         self.fentry_sex=gtk.combo_box_new_text()
         self.fentry_sex.append_text("Feminino")
         self.fentry_sex.append_text("Masculino")
@@ -322,7 +335,13 @@ class Painel(gtk.Window):
         box_id_esquerdo.pack_start(flabel_age)
         box_id_direito.pack_start(self.flabel_age_num)
         box_id_esquerdo.pack_start(flabel_birth)
-        box_id_direito.pack_start(self.fentry_birth)
+       
+	fhbox_idade.pack_start(self.fentry_bday)
+	fhbox_idade.pack_start(self.fentry_bmonth)
+	fhbox_idade.pack_start(self.fentry_byear)
+	
+	box_id_direito.pack_start(fhbox_idade)
+
         box_id_esquerdo.pack_start(flabel_esco)
         box_id_direito.pack_start(self.fentry_esco)
 
@@ -381,7 +400,7 @@ class Painel(gtk.Window):
 	count = 0
 	for i in maquinas:
 		self.lista_controle.append(gtk.ToggleButton(i[0]))
-		self.lista_controle[count].connect("clicked", self.addciclo,count,self.fentry_id,self.fentry_name,self.fentry_birth)
+		self.lista_controle[count].connect("clicked", self.addciclo,count,self.fentry_id,self.fentry_name,digitos(str(int(self.fentry_bday.get_active())+1))+"/"+digitos(str(int(self.fentry_bmonth.get_active())+1))+"/"+str(datetime.now().year-5-int(self.fentry_byear.get_active())))
 		self.box_line[count/columns].pack_start(self.lista_controle[count])
 		count = count + 1
 
@@ -513,8 +532,9 @@ class Painel(gtk.Window):
 			maquinas[i][1] = int(time())
 			maquinas[i][2] = ciclo
 			print maquinas[i]
-
-			cur.execute('INSERT INTO log (username,userid,birthday,computer,ip,date,min) values("'+str(maquinas[i][5])+'",'+str(id)+',"'+str(birth.get_text())+'","'+maquinas[i][0]+'","'+maquinas[i][3]+'","'+str(datetime.now())+'","'+str(maquinas[i][2])+'");')
+			birthday = digitos(str(int(self.fentry_bday.get_active())+1))+"/"+digitos(str(int(self.fentry_bmonth.get_active())+1))+"/"+str(datetime.now().year-5-int(self.fentry_byear.get_active()))  
+ 
+			cur.execute('INSERT INTO log (username,userid,birthday,computer,ip,date,min) values("'+str(maquinas[i][5])+'",'+str(id)+',"'+birthday+'","'+maquinas[i][0]+'","'+maquinas[i][3]+'","'+str(datetime.now())+'","'+str(maquinas[i][2])+'");')
 			connection.commit()
 		else:
 			maquinas[i][2] = maquinas[i][2] + ciclo
@@ -544,7 +564,11 @@ class Painel(gtk.Window):
 	
 	self.fentry_id.set_text(id)
 	self.fentry_name.set_text(str(dados[1]))
-	self.fentry_birth.set_text(str(dados[3]))
+	bday = dados[3].split('/')
+	self.fentry_bday.set_active(int(bday[0])-1)
+	self.fentry_bmonth.set_active(int(bday[1])-1)
+	self.fentry_byear.set_active((datetime.now().year-int(bday[2]))-5)
+	
 	age = date2years(dados[3])
 	if int(age) >= 0:
 		self.flabel_age_num.set_text(date2years(dados[3])+' anos')
@@ -784,11 +808,12 @@ def cleanup_id(string):
 
 def update_fields(self):
 	if self.fentry_id.get_text():
-		print '$'*80
-		print 'replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+','+self.fentry_name.get_text()+','+str(self.fentry_sex.get_active())+','+self.fentry_birth.get_text()+','+str(self.fentry_esco.get_active())+','+self.fentry_addr.get_text()+','+self.fentry_cep.get_text()+','+self.fentry_tel.get_text()+','+self.fentry_email.get_text()+');'
-		print '$'*80
-
-		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+self.fentry_birth.get_text()+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text()+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
+		
+		birthday = digitos(str(int(self.fentry_bday.get_active())+1))+"/"+digitos(str(int(self.fentry_bmonth.get_active())+1))+"/"+str(datetime.now().year-5-int(self.fentry_byear.get_active()))  
+ 		print birthday
+ 
+	
+		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+birthday+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text()+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
 		connection.commit()
 
 def digitos(dig):
@@ -804,7 +829,11 @@ def pontua_id(id):
 def clear_fields(self):
 	self.fentry_id.set_text(str(''))
 	self.fentry_name.set_text(str(''))
-	self.fentry_birth.set_text(str(''))
+	
+	self.fentry_bday.set_active(-1)	
+	self.fentry_bmonth.set_active(-1)	
+	self.fentry_byear.set_active(-1)	
+
 	self.fentry_addr.set_text(str(''))
 	self.fentry_cep.set_text(str(''))
 	self.fentry_tel.set_text(str(''))
