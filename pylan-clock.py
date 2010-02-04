@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# _*_ coding: UTF-8 _*_
 
 import gtk,gobject
 import pylanrc
@@ -11,7 +12,9 @@ ip = pylanrc.get_ip()
 print server_ip , interface, ip
 
 class Clock(gtk.Window):
+	""" Classe que cria objeto contador de tempo """
 	def __init__(self,parent=None):
+		""" Construtor do nosso contador de tempo """
 		gtk.Window.__init__(self)
 		try:
 			self.set_screen(parent.get_screen())
@@ -27,6 +30,7 @@ class Clock(gtk.Window):
 		self.show_all()
 
 def tempo(self):
+	""" Função que adquire o tempo restante no servidor """
 	try:
 		h = urllib.urlopen('http://'+server_ip+'/'+ip)
 		hud = h.read()
@@ -42,6 +46,7 @@ def tempo(self):
 	return True
 
 def n(var):
+	""" Recebe um número com um digito e retorna o mesmo numero com um zero na frente """
 	if len(var) < 2:
 		return '0'+var
 	else:
