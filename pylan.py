@@ -875,7 +875,7 @@ def update_fields(self):
 		connection.commit()
 
 def form_valido(self):
-""" Verifica se o formulario é válido """
+	""" Verifica se o formulario é válido """
  	if int(self.fentry_bday.get_active()) == -1  or int(self.fentry_bmonth.get_active()) == -1  or int(self.fentry_byear.get_active()) == -1:
 		self.opendialog("Data de nascimento inválida")
 		return False
