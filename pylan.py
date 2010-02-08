@@ -139,6 +139,8 @@ class Painel(gtk.Window):
 #	log_use_graph = gtk.Button("Distribuição por horário")
 	log_build_csv = gtk.Button("Gerar CSV dos acessos")
 	log_build_usercsv = gtk.Button("Gerar CSV da base de usuários")
+	import_csv = gtk.Button("Importar base de usuários de um CSV")
+
 	
 	log_htopo.pack_start(self.log_month_entry,False,False,0)
 	log_htopo.pack_start(gtk.Label('Ano : '),False,False,0)
@@ -148,14 +150,16 @@ class Painel(gtk.Window):
 	log_search_button.connect("clicked",self.gera_logs,False)
 	log_build_csv.connect("clicked",self.save_log_dialog)
 	log_build_usercsv.connect("clicked",self.save_userlog_dialog)
+	import_csv.connect("clicked",self.import_dialog)
 
 	log_htopo.pack_end(log_search_button,False,False,0)
         log_hmid.pack_start(log_sw,True,True,0)
 	log_hdown.pack_start(log_age_histogram)
 	log_hdown.pack_start(log_sex_pie)
-#	log_hdown.pack_start(log_use_graph)
 	log_hdown.pack_start(log_build_csv)
 	log_hdown.pack_start(log_build_usercsv)
+	log_hdown.pack_start(import_csv)
+
 
 	self.log_text = gtk.TextView()
 	log_sw.add(self.log_text)
@@ -508,6 +512,28 @@ class Painel(gtk.Window):
 		      print 'Closed, no files selected'
 	      chooser.destroy()
 
+    def import_dialog(self,button):
+	      chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_SAVE,buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+	      filter = gtk.FileFilter()
+	      filter.set_name("CSV")
+	      filter.add_pattern("*.csv")
+	      chooser.add_filter(filter)
+	      filter = gtk.FileFilter()
+	      filter.set_name("Todos arquivos")
+	      filter.add_pattern("*")
+	      chooser.add_filter(filter)
+
+	      response = chooser.run()
+	      
+	      if response == gtk.RESPONSE_OK:
+		      self.csv_path = chooser.get_filename()
+		      self.import_csv()
+		      self.opendialog("CSV importado com sucesso")
+	      elif response == gtk.RESPONSE_CANCEL:
+		      print 'Closed, no files selected'
+	      chooser.destroy()
+    
+
     def on_completion_match(self, completion, model, iter):
         self.set_text(model[iter][COL_TEXT])
         self.set_position(-1)
@@ -651,6 +677,36 @@ class Painel(gtk.Window):
 	fd = open(self.csv_path,'w')
 	fd.write(logs)
 	fd.close()	
+
+    def import_csv(self):
+	
+#	cur.execute('DROP TABLE users;')
+#	cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
+	
+	fd = open(self.csv_path,'r')
+	inputf = fd.read()
+	inputf = inputf.split('\n')
+	# limpa espacos em branco / newlines  no fim do arquivo se existirem
+	if inputf[-1] == '':
+		inputf = inputf[:-1]
+	
+	for i in inputf:
+		if i.split(',')[0] == 'RG/CPF':
+			continue
+		i = i[:-1]
+		print i 
+		print len(i)
+		i = str(i).replace('Feminino','0').replace('Masculino','1').replace("Ensino fundamental incompleto",'0').replace("Ensino fundamental",'1').replace("Ensino médio incompleto",'2').replace('Ensino médio','3').replace("Ensino superior incompleto",'4').replace("Ensino superior",'5').replace("Escolaridade inválida",'-1')
+		temp = ''
+		for j in i.split(','):
+			temp = temp+'"'+j+'",'
+		i = temp[:-1]
+		print "#"+i
+		print 'replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(i)+');'
+		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(i)+');')
+	connection.commit()
+	fd.close()	
+
 
     def gera_logs(self,button,save):
 	date= str(self.log_ano_entry.get_text()+'-'+digitos(str(int(self.log_month_entry.get_active())+1))+'%')
@@ -871,7 +927,7 @@ def update_fields(self):
 		if not form_valido(self):
 			return
 
-		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text().replace('.','').replace('-',''))+',"'+self.fentry_name.get_text()+'",'+str(self.fentry_sex.get_active())+',"'+birthday+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text().replace(',','%')+'","'+self.fentry_cep.get_text()+'","'+self.fentry_tel.get_text()+'","'+self.fentry_email.get_text()+'");')
+		cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES('+str(self.fentry_id.get_text()).replace('.','').replace('-','').replace(',','')+',"'+str(self.fentry_name.get_text()).replace(',','')+'",'+str(self.fentry_sex.get_active())+',"'+birthday+'",'+str(self.fentry_esco.get_active())+',"'+self.fentry_addr.get_text().replace(',','%')+'","'+self.fentry_cep.get_text().replace(',','')+'","'+self.fentry_tel.get_text().replace(',','')+'","'+self.fentry_email.get_text().replace(',','')+'");')
 		connection.commit()
 
 def form_valido(self):
@@ -879,7 +935,7 @@ def form_valido(self):
  	if int(self.fentry_bday.get_active()) == -1  or int(self.fentry_bmonth.get_active()) == -1  or int(self.fentry_byear.get_active()) == -1:
 		self.opendialog("Data de nascimento inválida")
 		return False
- 	if len(self.fentry_id.get_text()) < 7:
+ 	if len(self.fentry_id.get_text()) < 6:
 		self.opendialog("RG/CPF inválido")
 		return False
  	if len(self.fentry_name.get_text()) < 5:
@@ -894,15 +950,15 @@ def form_valido(self):
  	if len(self.fentry_addr.get_text()) < 5:
 		self.opendialog("Endereco inválido")
 		return False
- 	if len(self.fentry_cep.get_text()) < 5:
-		self.opendialog("CEP inválido")
-		return False
- 	if len(self.fentry_tel.get_text()) < 5:
-		self.opendialog("Telefone inválido")
-		return False
- 	if len(self.fentry_email.get_text()) < 5:
-		self.opendialog("Email inválido")
-		return False
+# 	if len(self.fentry_cep.get_text()) < 5:
+#		self.opendialog("CEP inválido")
+#		return False
+# 	if len(self.fentry_tel.get_text()) < 5:
+#		self.opendialog("Telefone inválido")
+#		return False
+# 	if len(self.fentry_email.get_text()) < 5:
+#		self.opendialog("Email inválido")
+#		return False
 	return True
 	 
 	
