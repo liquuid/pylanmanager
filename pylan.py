@@ -910,10 +910,26 @@ def agelist():
 	list=[]
 	cur.execute('select birthday from users where length(birthday)==10;')
 	for i in cur.fetchall():
-		list.append(date2years(i[0]))
+		if validage(i[0]):
+			list.append(date2years(i[0]))
+		else:
+			print i[0]
 	return list
 
-
+def validage(bd):
+	if len(bd) == 10 and len(bd.split('/')) == 3:
+		bd = bd.split('/')
+		try:
+			if int(bd[0]) > 0 and int(bd[0]) < 32 and int(bd[1]) > 0 and int(bd[1]) < 13 and int(bd[2]) > 1890 and int(bd[2]) < datetime.now().year:
+				return True
+			else:
+				return False
+		except:
+			return False
+	else:
+		return False
+		
+	
 
 def cleanup_id(string):
 	return string.replace('.','').replace('-','')
