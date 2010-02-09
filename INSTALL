@@ -1,0 +1,15 @@
+First Install the follow dependencies :
+
+python-matplotlib-tk
+python-sqlite3
+python-gtk
+
+Make a directory called /srv/pylan both server and clients , copy all python scripts into that. Then copy etc/pylan-client.conf to /etc/ of clients, and etc/pyland.conf to /etc of server.
+
+Turn off GDM of clients, and find a way to pylan-controler.py be executed by the same non-privileged user that you like to start a session. Inside /etc/rc.local for example :
+
+while true:do su foo -c '/srv/pylan/pylan-controler.py ; sleep 5; done
+
+On server, before you configure IP clients, check pyland.conf and run pyland.py for begin acept connections.
+
+Thats All

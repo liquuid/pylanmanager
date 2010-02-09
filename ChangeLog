@@ -1,0 +1,437 @@
+commit c3cfbebbae609350d11f282d7e49a90ad846c92d
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Tue Feb 9 08:46:53 2010 -0200
+
+    corretor de cadastros automatizado para o CCJ
+
+commit 00bb8823740f5fad5dcf3977ee28f9f6ba7f9047
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Tue Feb 9 08:46:28 2010 -0200
+
+    validadador de datas de nascimento
+
+commit ab3153701625dcca6060aeb06e5623406df97bd3
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Mon Feb 8 18:26:11 2010 -0200
+
+    Agora o pylan importa a base de dados de arquivos CSV
+
+commit 5a2d301e38611f154e1881cb973b6824b6bbda6a
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Mon Feb 8 15:19:46 2010 -0200
+
+    corrigindo erro de sintaxe primario
+
+commit 22ef575f7f7ce1cad1629a27a37fd6dfeca4f404
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Mon Feb 8 12:44:59 2010 -0200
+
+    Backup da lista de usuários para CSV, funcao para checar validade dos forms
+
+commit 1cf4556af0281cd55b2582ecb0f3f58040b8d51b
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Thu Feb 4 15:51:38 2010 -0200
+
+    alguma docmuentacao
+
+commit d80f223bbaaf66fdde99b55cfa79aee6467c5f9d
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Wed Feb 3 18:23:25 2010 -0200
+
+    agora a idade não pode ser setada de forma incorreta
+
+commit 4fa288927eb1849fc92baa238792adaddf5d10c2
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Tue Feb 2 08:35:46 2010 -0200
+
+    sistema de avisos funcional, e limpeza apos termino da sessao
+
+commit 86deb1c4f9a03678a08173e34e5f1d7af0026fe1
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Mon Feb 1 10:40:04 2010 -0200
+
+    aviso de 5 minutos faltantes
+
+commit 15d776361fd742aea2bec1af48dcafd61f343ac7
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Tue Jan 26 09:19:23 2010 -0200
+
+    dialogo informando que o tempo esta acabando
+
+commit ecb003ed7e04d5efbcb1b788d5154bc69f9412d6
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Jan 10 19:19:01 2010 -0200
+
+    otimizações no db
+
+commit a3f8ffaaea752895b740f8b7b87740368cc16adc
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Dec 7 11:44:42 2009 -0200
+
+    tirando as estatísticas desse release
+
+commit 55cc0caeb504e8a8d01cbe86958129acf96fc909
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Dec 7 06:13:26 2009 -0200
+
+    Limpando variaveis nao usadas
+
+commit d7380c5cf59fd57615e9a6a464e0f462e55a3fb3
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Dec 6 21:05:16 2009 -0200
+
+    sex pie com legendas melhores e números absolutos
+
+commit 8e3c05b78a2012841906e9402b6e9b851e91d096
+Author: liquuid <liquuid@vice.(none)>
+Date:   Fri Dec 4 18:02:27 2009 -0200
+
+    Logs com sexo, arquivos CSV salvos com sucesso
+
+commit 83f1ebde7e73c5c513920ecabe1c728676710a5f
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 30 19:58:29 2009 -0200
+
+    logs por mes rolando
+
+commit 826db30d86d62c63b923b1305ee30f887516dab6
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 30 05:55:27 2009 -0200
+
+    histogramas programados
+
+commit e81f78ea28b482312385961b3ec7712c89f6af8c
+Author: liquuid <liquuid@vice.(none)>
+Date:   Fri Nov 27 19:02:08 2009 -0200
+
+    autocompletion mais inteligente, conectado com a busca diretamente
+
+commit 43e1f1be799e8ee997557cfbde7a0d90347162d3
+Author: liquuid <liquuid@vice.(none)>
+Date:   Fri Nov 27 18:20:05 2009 -0200
+
+    idade calculada no formulario e logs
+
+commit 8c0382b1215ec5de24dff0643f0a0371b6fda1b0
+Author: liquuid <liquuid@vice.(none)>
+Date:   Fri Nov 27 13:49:39 2009 -0200
+
+    correções no alinhamento
+
+commit cb915154049d0a8e916dc15c2f273cce883ae3be
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 23 08:39:52 2009 -0200
+
+    Timer paralelo no pylan-controler
+
+commit 223be3618e8a0c7a7db88d1035bac4c42de0612e
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 23 06:24:52 2009 -0200
+
+    mais limpeza no cõdigo
+
+commit 820df5c81b4212effa6b3d16a394ac9e877b5124
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 23 06:21:34 2009 -0200
+
+    Alguma documentação e mais limpeza no cõdigo
+
+commit c31d60457e8570d491b5241cabc64585cdb36408
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 23 05:49:17 2009 -0200
+
+    Refatoração e simplificação do código do pylan-controler, filtros de segurança e maior latência na comunicação com o servidor
+
+commit f583bfa25cb2baa571d78ee07ecb317b8d2b6cbb
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sat Nov 21 22:47:41 2009 -0200
+
+    logs aparecendo na aba de logs :)
+
+commit 43376fd087ed628d0103932ea86d8e9db84206ea
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sat Nov 21 15:03:23 2009 -0200
+
+    Search completion funcionando
+
+commit eb85d5e8ce9183b83d5ef147b1240ea0fe690cba
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sat Nov 21 14:15:15 2009 -0200
+
+    Titulo para a janela do pylan
+
+commit 9c1c8dbc4b85db429b0753691068350a837b460a
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sat Nov 21 11:23:27 2009 -0200
+
+    fechando arquivos abertos pelo pylanrc
+
+commit f96beb364f050d698600dd95afc77a221e80f837
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sat Nov 21 11:10:49 2009 -0200
+
+    criadas funcoes para parsing das configuracoes, ou seja, acabou a zona
+
+commit 893ec932e8917b4f36a0a57724a3f32b30d0fd84
+Author: liquuid <liquuid@vice.(none)>
+Date:   Thu Nov 19 08:57:54 2009 -0200
+
+    rotinas de detecççao deerros de conexao e bug do relogio zerado corrigido
+
+commit 54658274ed2007a0eb696836a3f1493ca3d24a6e
+Author: liquuid <liquuid@vice.(none)>
+Date:   Thu Nov 19 08:40:24 2009 -0200
+
+    pyland cria diretõrio de trabalho caso nao exista
+
+commit 1d69c28d76c121c9b2d9ae01be5b54cc2136f31b
+Author: liquuid <liquuid@vice.(none)>
+Date:   Tue Nov 17 20:12:12 2009 -0200
+
+    Mais um comando do polkit
+
+commit 3619d78d1e57f7246025e6bfb17da19eadce2586
+Author: liquuid <liquuid@vice.(none)>
+Date:   Tue Nov 17 19:10:22 2009 -0200
+
+    Dicas sobre o polkit, limpesa do código
+
+commit e18cdbef0e658f588d2f162594174010f0c72c62
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 16 11:09:52 2009 -0200
+
+    Agora o painel não inicia mais sessões anônimas
+
+commit 156de0a7538f4dd4e15c4f2f9bf919b35961a2f8
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 16 10:12:45 2009 -0200
+
+    caixas de dialogo
+
+commit a413fa7ceeb97a35e4ed23197ef330ece3894202
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 16 09:29:12 2009 -0200
+
+    Configurações já podem ser editadas pela interface
+
+commit a0910f9bd7d9dd2537df57b46e595c577d8c8927
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 16 08:56:47 2009 -0200
+
+    Corrigido bug do editor de configurações
+
+commit e6b5a2019fb0c72594a14424a321e779ec55a8a6
+Author: liquuid <liquuid@vice.(none)>
+Date:   Mon Nov 16 08:35:20 2009 -0200
+
+    mudancas na estrutura da tabela log
+
+commit 13251490a15fc857fde0c3b09b645d076baf3227
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Nov 15 22:53:43 2009 -0200
+
+    log funcionando
+
+commit 43314f1886f0c351200fe40389883a30e7f99f1f
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Nov 15 21:23:32 2009 -0200
+
+    limpeza no código
+
+commit 43a74401779c6c05f001fcd8a0595e8d71526300
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Nov 15 21:18:22 2009 -0200
+
+    adicionada funcao para limpar id
+
+commit 7295f41abad97a0c1351b6843779d036adfdb79b
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Nov 15 21:01:47 2009 -0200
+
+    Busca por nome , mascara no RG e remocao da classe EditBox
+
+commit 698ce4fa08a54e1f9b4d32192b2f5e36f4c93ed6
+Author: liquuid <liquuid@vice.(none)>
+Date:   Sun Nov 15 15:16:13 2009 -0200
+
+    configurações ganha uma notebook
+
+commit b63d8fa275c3089e18f9b50f0cf5002daebf3101
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Thu Nov 12 23:35:20 2009 -0200
+
+    formulario gera sessao associada com id
+
+commit 813f7a9fa91de2505a43e77bab5d33cb352d35f8
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Thu Nov 12 12:48:49 2009 -0200
+
+    mudanca nos nomes das variaveis de blocos
+
+commit 792cb5fd0bb6b034998dcca6231dca787a4487b8
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Tue Nov 10 11:14:47 2009 -0200
+
+    correção na rotina de parsing das configurações. Listas de máquinas dentro da janela de form e sanitização dos parametros padrão.
+
+commit ceec4ac10ff2c68b4888d159bcc1dcc7f5fda12a
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Mon Nov 9 15:46:49 2009 -0200
+
+    corrigindo o path do pylan-clock
+
+commit 025ab9f994689d8c1bc386f023865b05911fd256
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Mon Nov 9 15:34:38 2009 -0200
+
+    pylan-controler nao lia interface da maquina
+
+commit b422b85afd9c1b05a7e74dfeb0ed634d8b0f9f53
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Mon Nov 9 14:57:09 2009 -0200
+
+    forms funcionando, para leitura e grvaçao
+
+commit 5e2b1a1ac710cb15b81622e59b7f258fc2341da1
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Mon Nov 9 05:59:27 2009 -0200
+
+    botao de search funcionando
+
+commit 99ba142236a816e6af3dc7a5944cc0f43e6d50c5
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Sat Nov 7 15:04:33 2009 -0200
+
+    Integração da interface de cadastro com a principal
+
+commit 34c252b2d25c68d0cbe9760bf05a2850221d3c53
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Sat Nov 7 13:03:20 2009 -0200
+
+    botão salvar, codigo para criação do banco de dados do formulario
+
+commit 8eb95362ce06b2dc3cb98bc18f1cd50e0116a8b7
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Thu Nov 5 13:49:13 2009 -0200
+
+    pylan-controler chamando o relogio certo :)
+
+commit 9146dbdf8a8d8cc3adb8f1142a3d971a3600f210
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Thu Nov 5 13:47:18 2009 -0200
+
+    faxina e renomeações
+
+commit ddd62e83a597687ca5f0a6da1704e3cfd108bbfd
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Thu Nov 5 06:21:26 2009 -0200
+
+    bugfix usando o qiv e exemplo de xinitrc
+
+commit 61a6994ed81fef4bf2d343da38d2e94bccfbd996
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Thu Nov 5 06:13:39 2009 -0200
+
+    agora o gnome morre ! + background
+
+commit 7d58ef3f80ceba514335fc825778a604c658f27f
+Author: liquuid <liquuid@liquuid-laptop.(none)>
+Date:   Wed Nov 4 19:36:12 2009 -0200
+
+    mudancas na sintaxe das configuracoes
+
+commit 1257af788f3791516d3ae9f974be4d4e9b91815c
+Author: liquuid <liquuid@vice.localdomain>
+Date:   Wed Nov 4 20:35:12 2009 -0200
+
+    mais campos no form
+
+commit dfc62790946fede53473a93c0df2ffbfc9f32891
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Oct 25 22:52:59 2009 -0200
+
+    funcao killprocess mata todos os processos do usuario menos os do pylan e os rodando em tty, adicionado campo RG no pylan-users
+
+commit cc09568701634c33a43c498b476da3a04fe6d722
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Fri Oct 23 12:00:45 2009 -0200
+
+    por um form mais jeitoso
+
+commit 462a712a2b1e09dd21f440cc295c303793daa406
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Thu Oct 22 18:08:48 2009 -0200
+
+    pylan-users para cadastro, apenas esqueleto
+
+commit 05658e47fddf6d0dc8182ce6d7bb9934302294c0
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Thu Oct 22 17:12:00 2009 -0200
+
+    removendo o django
+
+commit 4991caa28288e9c0f343f6f13a8dda3b9691eb99
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Thu Oct 22 17:10:47 2009 -0200
+
+    controlador de sessao nao funcional, exemplo de configuracao
+
+commit e8fad6ef0c39c442f42fc253a2f9055f36532167
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Mon Oct 19 02:23:04 2009 -0200
+
+    clientes, deamons, relogio etc...
+
+commit 7b14af39061fd4feffca97b47719c852496f0273
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Oct 18 23:09:20 2009 -0200
+
+    janela de configuracao escondida, ja le  e escreve do arquivo de conf local
+
+commit 127509cfd1a6673dc0996a3d6e7d52e29a3707cf
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Oct 18 19:53:58 2009 -0200
+
+    juntando painel e pylan no mesmo arquivo
+
+commit f637eae5b1bce848901199f422d1ef37d54eddcb
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Mon Oct 19 03:53:51 2009 -0200
+
+    contadores, e botoes de controle presentes e funcionais no painel
+
+commit 510d77e7cc129b423778bf4bc5b800d0380b2b52
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sat Oct 17 01:17:35 2009 -0300
+
+    moving django stuff to django stuff :) (django manager out of game) . New scre
+
+commit 59d530ac849fe1828ddc0bbd63bbd46c83117cf7
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Wed Oct 14 23:02:44 2009 -0300
+
+    timer na barra de status rolando
+
+commit ce8e079307ab15493758a6fa09ef86852aa3bc96
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Tue Oct 13 17:05:28 2009 -0300
+
+    coisas
+
+commit fd5dfca829a42b656ec6e7fde5bb725eab456f6b
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Mon Oct 12 21:14:46 2009 -0300
+
+    mais avanç  e interface em pygtk
+
+commit 7a2a564b4622a8816388311ced223671f7da68cd
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Oct 11 19:18:11 2009 -0300
+
+    only some fixes
+
+commit 4f52722fe84ac475c873ed94d42b3d10e2c569fd
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Mon Oct 5 23:18:09 2009 -0300
+
+    nada de util
