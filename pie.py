@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# vim:ts=4:sw=4:et
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
