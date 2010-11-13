@@ -16,7 +16,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # Copyright 2010 Fernando Henrique R. Silva (liquuid@gmail.com)
-# http://www.linuxmafia.com.br
+# http://hyddro.com
 
 import gtk,gobject
 import pylanrc

@@ -1,3 +1,29 @@
+commit b188e05b897360aa135212c43023ddb36f1690ae
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Feb 21 19:33:41 2010 -0300
+
+    script para testes , agindo como o pylan, mas com tempo reduzido
+
+commit 50fa3e463aa98d495207a706c04ecf874bc0f2a5
+Author: Fernando Henrique <liquuid@liquuid.net>
+Date:   Sun Feb 21 17:53:06 2010 -0300
+
+    Revert "adicionando configuações para o VIM tabular corretamente"
+    
+    This reverts commit 3e8ba5e05054ba3eb90554d8096c1d000941d75a.
+
+commit 3e8ba5e05054ba3eb90554d8096c1d000941d75a
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Wed Feb 10 21:27:36 2010 -0200
+
+    adicionando configuações para o VIM tabular corretamente
+
+commit 29c2ef399ce8d3d707ca34bc2b4f6acdfd661fc8
+Author: Fernando Henrique <liquuid@leona.localdomain>
+Date:   Tue Feb 9 13:24:18 2010 -0200
+
+    Documentacao e Licenciamento, e versao final para o CCJ
+
 commit c3cfbebbae609350d11f282d7e49a90ad846c92d
 Author: Fernando Henrique <liquuid@leona.localdomain>
 Date:   Tue Feb 9 08:46:53 2010 -0200
