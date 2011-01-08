@@ -55,11 +55,21 @@ except:
     connection = sqlite3.connect(os.path.expanduser('~/') + '.pylandb.sqlite3')
     cur = connection.cursor()
     # Cria as tabelas
-    cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
-    cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,username VARCHAR,userid INTEGER,computer VARCHAR,ip VARCHAR,date VARCHAR,min INTEGER,birthday VARCHAR)')
+    cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender \
+        NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone \
+        VARCHAR,email VARCHAR)')
+    cur.execute('CREATE TABLE log(id INTEGER PRIMARY KEY,username VARCHAR, \
+        userid INTEGER,computer VARCHAR,ip VARCHAR,date VARCHAR,min INTEGER, \
+        birthday VARCHAR)')
     # Preenche a tabela users com exemplos
-    cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(123456789,\'João José da Silva\',1,\'11/08/1978\',1,\'Rua da esquina num\',\'06626-080\',\'5555-1111\',\'jaum@example.com\');')
-    cur.execute('insert into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(234567890,\'Jeniuma Souza Santos\',0,\'22/04/1991\',4,\'Rua das Flores%123 \',\'1234-1236\',\'12334-123\',\'tesy@example.com\');')
+    cur.execute('insert into users \
+        (id,name,gender,birthday,grad,address,zip,phone,email) \
+        VALUES(123456789,\'João José da Silva\',1,\'11/08/1978\',1,\'Rua da \
+        esquina num\',\'06626-080\',\'5555-1111\',\'jaum@example.com\');')
+    cur.execute('insert into users (id,name,gender,birthday,grad,address,zip, \
+        phone,email) VALUES(234567890,\'Jeniuma Souza Santos\',0,\'22/04/1991\'\
+        ,4,\'Rua das Flores%123 \',\'1234-1236\',\'12334-123\', \
+        \'tesy@example.com\');')
     connection.commit()
 	
 connection = sqlite3.connect(os.path.expanduser('~/') + '.pylandb.sqlite3')
@@ -73,8 +83,10 @@ cfd = config.read()
 
 for i in range(len(cfd.split('\n'))):
     if cfd.split('\n')[i]:
-        maquinas.append([cfd.split('\n')[i].split(',')[0], 0, 0, cfd.split('\n')[i].split(',')[1], 0, '', True])
-        list_conf.append([cfd.split('\n')[i].split(',')[0], cfd.split('\n')[i].split(',')[1], True])
+        maquinas.append([cfd.split('\n')[i].split(',')[0], 0, 0,
+            cfd.split('\n')[i].split(',')[1], 0, '', True])
+        list_conf.append([cfd.split('\n')[i].split(',')[0],
+            cfd.split('\n')[i].split(',')[1], True])
 config.close()
 
 workdir = pylanrc.get_workdir()
@@ -88,7 +100,15 @@ workdir = pylanrc.get_workdir()
 
 
 # Colunas de log
-(LOG_ID, LOG_PC, LOG_NAME, LOG_AGE, LOG_BIRTH, LOG_RG, LOG_INI, LOG_TEMP) = range(8)
+(
+LOG_ID,
+LOG_PC,
+LOG_NAME,
+LOG_AGE,
+LOG_BIRTH,
+LOG_RG,
+LOG_INI,
+LOG_TEMP) = range(8)
 
 
 class Painel(gtk.Window):
@@ -116,7 +136,7 @@ class Painel(gtk.Window):
         self.add(mtable)
 
 
-        ###############################################################################
+        ########################################################################
         # Aba de logs
 
         log_vbox = gtk.VBox(False, 0)
@@ -309,7 +329,8 @@ class Painel(gtk.Window):
 
         self.fentry_bmonth = gtk.combo_box_new_text()
 
-        for i in ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]:
+        for i in ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+            "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]:
             self.fentry_bmonth.append_text(i)
 
             self.fentry_byear = gtk.combo_box_new_text()
@@ -381,11 +402,6 @@ class Painel(gtk.Window):
         box_contato_esquerdo.pack_start(flabel_email)
         box_contato_direito.pack_start(self.fentry_email)
 
-        #       self.statusbar = gtk.Statusbar()
-        #       hbox.pack_start(self.statusbar,True,True,0)
-        #       self.context_id = self.statusbar.get_context_id("context_description")
-        #       self.statusbar.show()
-
         fbutton_add = gtk.Button(stock=gtk.STOCK_ADD)
         fbutton_clear = gtk.Button(stock=gtk.STOCK_CLEAR)
         fbutton_search = gtk.Button(stock=gtk.STOCK_FIND)
@@ -428,8 +444,17 @@ class Painel(gtk.Window):
 
         for i in maquinas:
             self.lista_controle.append(gtk.ToggleButton(i[0]))
-            self.lista_controle[count].connect("clicked", self.addciclo, count, self.fentry_id, self.fentry_name, digitos(str(int(self.fentry_bday.get_active()) + 1)) + "/" + digitos(str(int(self.fentry_bmonth.get_active()) + 1)) + "/" + str(datetime.now().year-5-int(self.fentry_byear.get_active())))
-            self.box_line[count / columns].pack_start(self.lista_controle[count])
+
+            self.lista_controle[count].connect("clicked",
+                self.addciclo,
+                count,
+                self.fentry_id,
+                self.fentry_name,
+                digitos(str(int(self.fentry_bday.get_active()) + 1)) + "/" +
+                digitos(str(int(self.fentry_bmonth.get_active()) + 1)) + "/" +
+                str(datetime.now().year-5-int(self.fentry_byear.get_active())))
+
+            self.box_line[count/ columns].pack_start(self.lista_controle[count])
             count = count + 1
 
         ########################################################################
@@ -496,7 +521,13 @@ class Painel(gtk.Window):
         self.show_all()
 
     def save_userlog_dialog(self, button):
-        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(title=None,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN,
+                gtk.RESPONSE_OK))
+
         filter = gtk.FileFilter()
         filter.set_name("CSV")
         filter.add_pattern("*.csv")
@@ -517,7 +548,13 @@ class Painel(gtk.Window):
 
 
     def save_log_dialog(self, button):
-        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(title=None,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN,
+                gtk.RESPONSE_OK))
+
         filter = gtk.FileFilter()
         filter.set_name("CSV")
         filter.add_pattern("*.csv")
@@ -537,7 +574,13 @@ class Painel(gtk.Window):
         chooser.destroy()
 
     def import_dialog(self, button):
-        chooser = gtk.FileChooserDialog(title=None, action=gtk.FILE_CHOOSER_ACTION_SAVE, buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser = gtk.FileChooserDialog(title=None,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL,
+                gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN,
+                gtk.RESPONSE_OK))
+
         filter = gtk.FileFilter()
         filter.set_name("CSV")
         filter.add_pattern("*.csv")
@@ -563,8 +606,7 @@ class Painel(gtk.Window):
         self.set_position(-1)
 
     def timeout(self, i):
-    	if (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time())) / 60.0 < 0:
-
+    	if (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time()))/60.0< 0:
             return True
     	else:
             return False
@@ -575,7 +617,7 @@ class Painel(gtk.Window):
         temp = ''
         
         for i in xrange(len(list_conf)):
-            temp = temp + str(list_conf[i][0]) + ',' + str(list_conf[i][1]) + '\n'
+            temp = temp + str(list_conf[i][0])+ ','+ str(list_conf[i][1]) + '\n'
 
         arquivo.write(temp)
         self.opendialog('Configurações salvas com sucesso')
@@ -583,9 +625,10 @@ class Painel(gtk.Window):
 
     def opendialog(self, message):
         dialog = gtk.MessageDialog(self,
-                                   gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                   gtk.MESSAGE_INFO, gtk.BUTTONS_OK,
-                                   message)
+            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            gtk.MESSAGE_INFO, gtk.BUTTONS_OK,
+            message)
+
         dialog.run()
         dialog.destroy()
 
@@ -596,7 +639,9 @@ class Painel(gtk.Window):
 
     def add30(self, button, i):
 	if self.timeout(i):
-            self.opendialog('O computador ' + maquinas[i][0] + ' não tem nenhum usuário associado. Não é possível iniciar uma sessão anônima, isto é, sem um usuário registrado')
+            self.opendialog('O computador ' + maquinas[i][0]+ ' não tem nenhum\
+            usuário associado. Não é possível iniciar uma sessão anônima, isto\
+            é, sem um usuário registrado')
 	else:
             maquinas[i][2] = maquinas[i][2] + ciclo
 
@@ -611,22 +656,38 @@ class Painel(gtk.Window):
                 maquinas[i][1] = int(time())
                 maquinas[i][2] = ciclo
                 print maquinas[i]
-                birthday = digitos(str(int(self.fentry_bday.get_active()) + 1)) + "/" + digitos(str(int(self.fentry_bmonth.get_active()) + 1)) + "/" + str(datetime.now().year-5-int(self.fentry_byear.get_active()))
+
+                birthday = digitos(str(int(self.fentry_bday.get_active()) + 1))\
+                + "/" + digitos(str(int(self.fentry_bmonth.get_active()) +\
+                1)) + "/" + str(datetime.now().year-5 -\
+                int(self.fentry_byear.get_active()))
  
-                cur.execute('INSERT INTO log (username,userid,birthday,computer,ip,date,min) values("' + str(maquinas[i][5]) + '",' + str(id) + ',"' + birthday + '","' + maquinas[i][0] + '","' + maquinas[i][3] + '","' + str(datetime.now()) + '","' + str(maquinas[i][2]) + '");')
+                cur.execute('INSERT INTO log (username,userid,birthday,\
+                    computer,ip,date,min) values("' + str(maquinas[i][5]) +\
+                    '",' + str(id) + ',"' + birthday + '","' + maquinas[i][0] +\
+                    '","' + maquinas[i][3] + '","' + str(datetime.now()) +\
+                    '","' + str(maquinas[i][2]) + '");')
+
                 connection.commit()
+
             else:
                 maquinas[i][2] = maquinas[i][2] + ciclo
 
     def search_pressed(self, button, model, iter):
-	""" Você entra com self, button , model e iter. Sendo que button funciona para o botão e model, iter para buscas aa partir do auto completion."""
+	""" Você entra com self, button , model e iter. Sendo que button
+        funciona para o botão e model, iter para buscas aa partir do auto
+        completion."""
         try: 
             self.fentry_search.set_text(model[iter][0])
         except:
             pass
 	
         type = self.fentry_type_search.get_active()
-        parametro = self.fentry_search.get_text().replace('.', '').replace('-', '').replace(' ', '%').replace('\'', '')
+        parametro = self.fentry_search.get_text().replace('.', '')\
+            .replace('-', '')\
+            .replace(' ', '%')\
+            .replace('\'', '')
+
         if type == 0:
             try:
                 dados = search_by_name(self, parametro)[0]
@@ -676,10 +737,15 @@ class Painel(gtk.Window):
     	print "usercsv"
     	cur.execute('select * from users;')
     	list = cur.fetchall()
-    	logs = 'RG/CPF,Nome , Sexo , Data de nascimento, Escolaridade, Endereco,CEP , Telefone , Email\n'
+    	logs = 'RG/CPF,Nome , Sexo , Data de nascimento, Escolaridade,\
+            Endereco,CEP , Telefone , Email\n'
         try:
             for i in xrange(len(list)):
-                logs = logs + str(list[i][0]) + ',' + str(list[i][1]) + ',' + which_sex(list[i][2]) + ',' + str(list[i][3]) + ',' + which_grad(list[i][4]) + ',' + str(list[i][5]).replace(',', '%') + ',' + str(list[i][6]) + ',' + str(list[i][7]) + ',' + str(list[i][8]) + ',' + '\n'
+                logs = logs + str(list[i][0]) + ',' +\
+                    str(list[i][1]) + ',' + which_sex(list[i][2]) + ',' +\
+                    str(list[i][3]) + ',' + which_grad(list[i][4]) + ',' +\
+                    str(list[i][5]).replace(',', '%') + ',' + str(list[i][6]) +\
+                    ',' + str(list[i][7]) + ',' + str(list[i][8]) + ',' + '\n'
 
         except:
             print list[i]
@@ -691,16 +757,26 @@ class Painel(gtk.Window):
     
     def save_csv(self):
         print "csv"
-        date = str(self.log_ano_entry.get_text() + '-' + digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
+        date = str(self.log_ano_entry.get_text() + '-' +\
+            digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
+
         self.buffer.set_text("")
-        cur.execute('select * from log where date like \'' + date + '\' order by id ;')
+        cur.execute('select * from log where date like \'' + date +\
+            '\' order by id ;')
         list = cur.fetchall()
-        cur.execute('select gender from log inner join users on users.id = log.userid where log.date like \'' + date + '\' order by log.id;')
+        cur.execute('select gender from log inner join users on users.id =\
+            log.userid where log.date like \'' + date + '\' order by log.id;')
         sex = cur.fetchall()
-        logs = 'número da sessão, Máquina , IP , Nome , idade , sexo , nascimento, RG, Data de acesso, duração da sessão\n'
+        logs = 'número da sessão, Máquina , IP , Nome , idade , sexo ,\
+            nascimento, RG, Data de acesso, duração da sessão\n'
         try:
             for i in xrange(len(list)):
-                logs = logs + str(list[i][0]) + ',' + str(list[i][3]) + ',' + str(list[i][4]) + ',' + str(list[i][1]) + ',' + str(date2years(list[i][7])) + ',' + which_sex(sex[i][0]) + ',' + str(list[i][7]) + ',' + str(pontua_id(str(list[i][2]))) + ',' + str(list[i][5]) + ',' + str(list[i][6]) + '\n'
+                logs = logs + str(list[i][0]) + ',' +\
+                    str(list[i][3]) + ',' + str(list[i][4]) + ',' +\
+                    str(list[i][1]) + ',' + str(date2years(list[i][7])) + ',' +\
+                    which_sex(sex[i][0]) + ',' + str(list[i][7]) + ',' +\
+                    str(pontua_id(str(list[i][2]))) + ',' + str(list[i][5]) +\
+                    ',' + str(list[i][6]) + '\n'
         except:
             print list[i]
 
@@ -710,9 +786,6 @@ class Painel(gtk.Window):
         fd.close()	
 
     def import_csv(self):
-	
-        # cur.execute('DROP TABLE users;')
-        # cur.execute('CREATE TABLE users(id INTEGER PRIMARY KEY,name VARCHAR,gender NUMBER,birthday VARCHAR,grad NUMBER,address VARCHAR,zip VARCHAR,phone VARCHAR,email VARCHAR)')
 	
         fd = open(self.csv_path, 'r')
         inputf = fd.read()
@@ -727,30 +800,51 @@ class Painel(gtk.Window):
             i = i[:-1]
             print i 
             print len(i)
-            i = str(i).replace('Feminino', '0').replace('Masculino', '1').replace("Ensino fundamental incompleto", '0').replace("Ensino fundamental", '1').replace("Ensino médio incompleto", '2').replace('Ensino médio', '3').replace("Ensino superior incompleto", '4').replace("Ensino superior", '5').replace("Escolaridade inválida", '-1')
+            i = str(i).replace('Feminino', '0')\
+                .replace('Masculino', '1')\
+                .replace("Ensino fundamental incompleto", '0')\
+                .replace("Ensino fundamental", '1')\
+                .replace("Ensino médio incompleto", '2')\
+                .replace('Ensino médio', '3')\
+                .replace("Ensino superior incompleto", '4')\
+                .replace("Ensino superior", '5')\
+                .replace("Escolaridade inválida", '-1')
+
             temp = ''
             for j in i.split(','):
                 temp = temp + '"' + j + '",'
             i = temp[:-1]
             print "#" + i
-            print 'replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(' + str(i) + ');'
-            cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(' + str(i) + ');')
+            print 'replace into users (id,name,gender,birthday,grad,address,\
+                zip,phone,email) VALUES(' + str(i) + ');'
+            cur.execute('replace into users (id,name,gender,birthday,grad,\
+                address,zip,phone,email) VALUES(' + str(i) + ');')
         connection.commit()
         fd.close()	
 
 
     def gera_logs(self, button, save):
-        date = str(self.log_ano_entry.get_text() + '-' + digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
+        date = str(self.log_ano_entry.get_text() + '-' +\
+            digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
         self.buffer.set_text("")
-        cur.execute('select * from log where date like \'' + date + '\' order by -id ;')
+        cur.execute('select * from log where date like \'' + date +\
+            '\' order by -id ;')
         list = cur.fetchall()
-        cur.execute('select gender from log inner join users on users.id = log.userid where log.date like \'' + date + '\' order by -log.id;')
+        cur.execute('select gender from log inner join users on users.id =\
+            log.userid where log.date like \'' + date + '\' order by -log.id;')
         sex = cur.fetchall()
 
         logs = ''
         try:
             for i in xrange(len(list)):
-                logs = logs + 'sessão: ' + str(list[i][0]) + ', ' + str(list[i][3]) + ' ( ' + str(list[i][4]) + ' ) ' + ' , nome =  ' + str(list[i][1]) + ' , idade = ' + str(date2years(list[i][7])) + ' anos , sexo = ' + which_sex(sex[i][0]) + ' , nascimento: ' + str(list[i][7]) + ' , rg: ' + str(pontua_id(str(list[i][2]))) + ' , data =  ' + str(list[i][5]) + ' , ' + str(list[i][6]) + ' minutos\n'
+                logs = logs + 'sessão: ' + str(list[i][0]) + ', ' +\
+                    str(list[i][3]) + ' ( ' + str(list[i][4]) + ' ) ' + '\
+                    , nome =  ' + str(list[i][1]) + ' , idade = ' +\
+                    str(date2years(list[i][7])) + ' anos , sexo = ' +\
+                    which_sex(sex[i][0]) + ' , nascimento: ' +\
+                    str(list[i][7]) + ' , rg: ' +\
+                    str(pontua_id(str(list[i][2]))) + ' , data =  ' +\
+                    str(list[i][5]) + ' , ' + str(list[i][6]) + ' minutos\n'
         except:
             print list[i]
 	
@@ -762,12 +856,20 @@ class Painel(gtk.Window):
     
     def __create_model(self):
     # create list store
-        model = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_BOOLEAN)
+        model = gtk.ListStore(gobject.TYPE_STRING,
+            gobject.TYPE_STRING,
+            gobject.TYPE_BOOLEAN)
 
         # add items
         for item in list_conf:
             iter = model.append()
-            model.set (iter, COLUMN_NAME, item[COLUMN_NAME], COLUMN_IP, item[COLUMN_IP], COLUMN_EDITABLE, item[COLUMN_EDITABLE])
+            model.set (iter,
+                COLUMN_NAME,
+                item[COLUMN_NAME],
+                COLUMN_IP,
+                item[COLUMN_IP],
+                COLUMN_EDITABLE,
+                item[COLUMN_EDITABLE])
         
         return model
 
@@ -800,7 +902,13 @@ class Painel(gtk.Window):
         list_conf.append(new_item)
 
         iter = model.append()
-        model.set (iter, COLUMN_NAME, new_item[COLUMN_NAME], COLUMN_IP, new_item[COLUMN_IP], COLUMN_EDITABLE, new_item[COLUMN_EDITABLE])
+        model.set (iter,
+            COLUMN_NAME,
+            new_item[COLUMN_NAME],
+            COLUMN_IP,
+            new_item[COLUMN_IP],
+            COLUMN_EDITABLE,
+            new_item[COLUMN_EDITABLE])
 
 
     def on_remove_item_clicked(self, button, treeview):
@@ -849,19 +957,24 @@ class Painel(gtk.Window):
 	for i in abs2percent(self.sex_relative(self)):
             param = param + str(i) + ','
         abs = str(self.sex_relative(self)).strip('[').strip(']').replace(',', '')
-        os.system('/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' + '"Mulheres x Homens, Total dos visitantes "' + ' &')
-        print '/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' + '"Mulheres x Homens, Total dos visitantes "' + ' &'
+        os.system('/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' +\
+            '"Mulheres x Homens, Total dos visitantes "' + ' &')
+        print '/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' +\
+            '"Mulheres x Homens, Total dos visitantes "' + ' &'
         param = ''
         for i in abs2percent(self.sex_absolute(self)):
             param = param + str(i) + ','
         abs = str(self.sex_absolute(self)).strip('[').strip(']')
-        os.system('/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' + '"Mulheres x Homens, Visitantes unicos"' + ' &')
+        os.system('/srv/pylan/pie.py ' + param.strip(',') + ' ' + abs + ' ' +\
+        '"Mulheres x Homens, Visitantes unicos"' + ' &')
 
     def sex_relative(self, button):
         h = 0
         m = 0
-        date = str(self.log_ano_entry.get_text() + '-' + digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
-        cur.execute('select name,gender from log inner join users on users.id = log.userid where date like "' + date + '";')
+        date = str(self.log_ano_entry.get_text() + '-' +\
+            digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
+        cur.execute('select name,gender from log inner join users on users.id =\
+            log.userid where date like "' + date + '";')
         for i in cur.fetchall():
             try:
                 if int(i[1]) == 0:
@@ -876,8 +989,10 @@ class Painel(gtk.Window):
     def sex_absolute(self, button):
         h = 0
         m = 0
-        date = str(self.log_ano_entry.get_text() + '-' + digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
-        cur.execute('select distinct name,gender from log inner join users on users.id = log.userid where date like "' + date + '";')
+        date = str(self.log_ano_entry.get_text() + '-' + \
+            digitos(str(int(self.log_month_entry.get_active()) + 1)) + '%')
+        cur.execute('select distinct name,gender from log inner join users on \
+            users.id = log.userid where date like "' + date + '";')
         for i in cur.fetchall():
             try:
                 if int(i[1]) == 0:
@@ -936,7 +1051,13 @@ def validage(bd):
     if len(bd) == 10 and len(bd.split('/')) == 3:
         bd = bd.split('/')
         try:
-            if int(bd[0]) > 0 and int(bd[0]) < 32 and int(bd[1]) > 0 and int(bd[1]) < 13 and int(bd[2]) > 1890 and int(bd[2]) < datetime.now().year:
+            if int(bd[0]) > 0 and \
+                int(bd[0]) < 32 and \
+                int(bd[1]) > 0 and \
+                int(bd[1]) < 13 and \
+                int(bd[2]) > 1890 and \
+                int(bd[2]) < datetime.now().year:
+
                 return True
             else:
                 return False
@@ -954,17 +1075,33 @@ def cleanup_id(string):
 def update_fields(self):
     if self.fentry_id.get_text():
 		
-        birthday = digitos(str(int(self.fentry_bday.get_active()) + 1)) + "/" + digitos(str(int(self.fentry_bmonth.get_active()) + 1)) + "/" + str(datetime.now().year-5-int(self.fentry_byear.get_active()))
+        birthday = digitos(str(int(self.fentry_bday.get_active()) + 1)) + "/" +\
+            digitos(str(int(self.fentry_bmonth.get_active()) + 1)) + "/" +\
+            str(datetime.now().year-5-int(self.fentry_byear.get_active()))
         print birthday
         if not form_valido(self):
             return
 
-        cur.execute('replace into users (id,name,gender,birthday,grad,address,zip,phone,email) VALUES(' + str(self.fentry_id.get_text()).replace('.', '').replace('-', '').replace(',', '') + ',"' + str(self.fentry_name.get_text()).replace(',', '') + '",' + str(self.fentry_sex.get_active()) + ',"' + birthday + '",' + str(self.fentry_esco.get_active()) + ',"' + self.fentry_addr.get_text().replace(',', '%') + '","' + self.fentry_cep.get_text().replace(',', '') + '","' + self.fentry_tel.get_text().replace(',', '') + '","' + self.fentry_email.get_text().replace(',', '') + '");')
+        cur.execute('replace into users (id,name,gender,birthday,grad,address,\
+            zip,phone,email) VALUES(' + str(self.fentry_id.get_text())\
+            .replace('.', '')\
+            .replace('-', '')\
+            .replace(',', '') + ',"' + str(self.fentry_name.get_text())\
+            .replace(',', '') + '",' + str(self.fentry_sex.get_active())\
+            + ',"' + birthday + '",' + str(self.fentry_esco.get_active())\
+            + ',"' + self.fentry_addr.get_text().replace(',', '%') + '","' +\
+            self.fentry_cep.get_text().replace(',', '') + '","' +\
+            self.fentry_tel.get_text().replace(',', '') + '","' +\
+            self.fentry_email.get_text().replace(',', '') + '");')
+
         connection.commit()
 
 def form_valido(self):
     """ Verifica se o formulario é válido """
-    if int(self.fentry_bday.get_active()) == -1  or int(self.fentry_bmonth.get_active()) == -1  or int(self.fentry_byear.get_active()) == -1:
+    if int(self.fentry_bday.get_active()) == -1  or \
+        int(self.fentry_bmonth.get_active()) == -1  or \
+        int(self.fentry_byear.get_active()) == -1:
+
         self.opendialog("Data de nascimento inválida")
         return False
     if len(self.fentry_id.get_text()) < 6:
@@ -1054,8 +1191,12 @@ def tempo(self):
                 self.lista_controle[j].set_sensitive(True)
             self.lista_controle[i].set_active(True)
 
-        if (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time())) / 60.0 < 1 and (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time())) / 60.0 > 0:
-            self.vars[i].set_text(str((int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time()))) + " segundos")
+        if (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time())) / 60.0 \
+            < 1 and (int(maquinas[i][1]) + int(maquinas[i][2] * 60)-\
+            int(time())) / 60.0 > 0:
+
+            self.vars[i].set_text(str((int(maquinas[i][1]) + \
+                int(maquinas[i][2] * 60)-int(time()))) + " segundos")
             self.nomes[i].set_text(str(maquinas[i][5]))
         elif	self.timeout(i):
             self.vars[i].set_text(str("Disponível"))
@@ -1068,21 +1209,24 @@ def tempo(self):
 
 
         elif    not self.timeout(i):
-            self.vars[i].set_text(str((int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time()) + 60) / 60) + " minutos")
+            self.vars[i].set_text(str((int(maquinas[i][1]) + int(maquinas[i][2]\
+                * 60)-int(time()) + 60) / 60) + " minutos")
             self.nomes[i].set_text(str(maquinas[i][5]))
 
         if not self.timeout(i):
             fd = open(workdir + maquinas[i][3], 'w')
-            fd.write(str(int(maquinas[i][1]) + int(maquinas[i][2] * 60)-int(time())))
+            fd.write(str(int(maquinas[i][1]) + int(maquinas[i][2] * 60)\
+                -int(time())))
             fd.close()
 
 
-        self.statusbar.push(self.context_id, str(datetime.now()))
-        return True
+    self.statusbar.push(self.context_id, str(datetime.now()))
+    return True
 
 
 def date2years(date):
-	""" Pega uma data no formato (dd/mm/aaaa) e converte no número de anos corridos desde então """
+	""" Pega uma data no formato (dd/mm/aaaa) e converte no número
+        de anos corridos desde então """
 	date = date.split('/')
 	agora = datetime.now()
 	try:
@@ -1104,3 +1248,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+ 
